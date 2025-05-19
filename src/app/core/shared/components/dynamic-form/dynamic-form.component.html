@@ -1,0 +1,427 @@
+<div class="w-full p-6 mx-auto mt-8 lg:w-1/2 ">
+
+    <form (ngSubmit)="onSubmit()" [formGroup]="form" class="flex flex-col justify-center w-full">
+
+        @for (field of this.formData().Fields; track field.Code; let indexField = $index) {
+
+        <div class="w-full mb-4">
+
+
+
+            @if(shouldShowLabel(field.Code)){
+
+
+
+            <!-- Label del campo -->
+
+            <mat-label class="block mb-2 text-black text-pretty text-md"
+
+                [ngClass]="field.Code === 'radio' ? 'font-normal' : 'font-semibold'" >
+
+                {{ field.Name }}
+
+                @if (field.IsRequired) {
+
+                <span class="text-red-700">*</span>
+
+                }
+
+            </mat-label>
+
+            }
+
+
+
+            <!-- Según el tipo de campo, selecciona uno -->
+
+            @switch (field.TypeField) {
+
+
+            <!-- Campo alfanumérico -->
+
+            @case ("text") {
+            <mat-form-field class="w-full ">
+
+                <input type="text" [title]="field.Name" [id]="field.Code" [formControlName]="field.Code"
+
+                    [disabled]="field.Disabled" matInput class="text-gray-700 text-md focus:outline-none focus:ring-0"
+
+                    [maxlength]="field.MaxLength ?? null" [minlength]="field.MinLength ?? null"
+
+                    [placeholder]="field.Placeholder ?? ''" />
+
+
+
+                @if (form.controls[field.Code].hasError('required') && form.controls[field.Code].touched) {
+
+                <mat-error class="text-xs text-red-600">
+
+                    Campo requerido
+
+                </mat-error>
+
+                }
+
+
+
+            </mat-form-field>
+
+            }
+
+            @case ("email") {
+
+            <mat-form-field class="w-full ">
+
+                <input type="text" [title]="field.Name" [id]="field.Code" [formControlName]="field.Code"
+
+                    [disabled]="field.Disabled" matInput class="text-gray-700 text-md focus:outline-none focus:ring-0"
+
+                    [maxlength]="field.MaxLength ?? null" [minlength]="field.MinLength ?? null"
+
+                    [placeholder]="field.Placeholder ?? ''" />
+
+
+
+                @if (form.controls[field.Code].hasError('required') && form.controls[field.Code].touched) {
+
+                <mat-error class="text-xs text-red-600">
+
+                    Campo requerido
+
+                </mat-error>
+
+                }
+
+                @if (form.controls[field.Code].hasError('email')) {
+
+                <mat-error class="text-xs text-red-600">
+
+                    Correo inválido
+
+                </mat-error>
+
+                }
+
+            </mat-form-field>
+
+            }
+
+            @case("tel"){
+
+            <!--     <ngx-material-intl-tel-input [formControlName]="field.Code" class="" [required]="true"
+
+                    [autoIpLookup]="false">
+
+                </ngx-material-intl-tel-input> -->
+
+
+
+
+
+            <mat-form-field class="w-full ">
+
+                <input type="text" [title]="field.Name" [id]="field.Code" [formControlName]="field.Code"
+
+                    [disabled]="field.Disabled" matInput class="text-gray-700 text-md focus:outline-none focus:ring-0"
+
+                    [maxlength]="field.MaxLength ?? null" [minlength]="field.MinLength ?? null" (keypress)="numberOnly($event)"
+
+                    [placeholder]="field.Placeholder ?? ''" />
+
+                @if(form.controls[field.Code].hasError('required') && form.controls[field.Code].touched){
+
+                <mat-error class="text-xs text-red-600">
+
+                    Campo requerido
+
+                </mat-error>
+
+                }
+
+                @if(form.controls[field.Code].hasError('invalidNumber')){
+
+                <mat-error class="text-xs text-red-600">
+
+                    Campo debe contener números
+
+                </mat-error>
+
+                }
+
+
+
+            </mat-form-field>
+
+            }
+
+
+
+            <!-- Campo Slide Toggle -->
+
+            @case ("slidetoggle") {
+
+            <mat-slide-toggle [formControlName]="field.Code" [disabled]="field.IsEditable"
+
+                [checked]="field.DefaultValue"></mat-slide-toggle>
+
+            }
+
+
+
+            <!-- Campo de fecha -->
+
+            @case ("datetime") {
+
+            <mat-form-field class="w-full ">
+
+                <mat-hint class="text-sm font-normal text-gray-500">Selecciona la fecha</mat-hint>
+
+                <input matInput [title]="field.Name" [matDatepicker]="picker" [formControlName]="field.Code"
+
+                    [id]="field.Code" class="text-gray-700 text-md focus:outline-none focus:ring-0"
+
+                    [max]="maxDateValidation">
+
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+
+                <mat-datepicker #picker></mat-datepicker>
+
+
+
+                @if (form.controls[field.Code].hasError('required') && form.controls[field.Code].touched) {
+
+                <mat-error class="text-xs text-red-600">
+
+                    Campo requerido
+
+                </mat-error>
+
+                }
+
+                @if(form.controls[field.Code].errors?.['invalidDate'] ){
+
+                <mat-error class="text-xs text-red-600">
+
+                    Debe ser mayor de 18 años
+
+                </mat-error>
+
+
+
+                }
+
+            </mat-form-field>
+
+            }
+
+
+
+            <!-- Campo de número -->
+
+            @case ("number") {
+
+            <mat-form-field class="w-full ">
+
+                <input matInput [title]="field.Name" type="number" [id]="field.Code" [formControlName]="field.Code"
+
+                    class="text-gray-700 text-md focus:outline-none focus:ring-0" [min]="0" [max]="field.Max ?? null"
+
+                    [placeholder]="field.Placeholder ?? ''" (keypress)="numberOnly($event)" />
+
+                @if (form.controls[field.Code].hasError('required') && form.controls[field.Code].touched) {
+
+                <mat-error class="text-xs text-red-600">
+
+                    Campo requerido
+
+                </mat-error>
+
+                }
+
+            </mat-form-field>
+
+            }
+
+            @case ("decimal") {
+
+            <mat-form-field class="w-full ">
+
+
+
+
+
+
+
+                <input matInput [title]="field.Name" type="text" [id]="field.Code" [formControlName]="field.Code"
+
+                    class="text-gray-700 text-md focus:outline-none focus:ring-0"
+
+                    [placeholder]="field.Placeholder ?? ''"
+
+                    (paste)="handlePasteDecimal($event.clipboardData?.getData('text/plain'))" decimalValidator />
+
+
+<!--
+                <mat-prefix matPrefix>
+
+                    <mat-select [(value)]="selectedCurrency" class="min-w-[60px]" disableRipple>
+
+                        @for(currency of currencies; track $index){
+
+                        <mat-option [value]="currency">
+
+                            {{ currency }}
+
+                        </mat-option>
+
+                        }
+
+                    </mat-select>
+
+                </mat-prefix>
+ -->
+
+
+                @if (form.controls[field.Code].hasError('required') && form.controls[field.Code].touched) {
+
+                <mat-error class="text-xs text-red-600">
+
+                    Campo requerido
+
+                </mat-error>
+
+                }
+
+            </mat-form-field>
+
+
+
+            }
+
+            <!-- Campo de texto grande (textarea) -->
+
+            @case ("textarea") {
+
+            <mat-form-field class="w-full ">
+
+                <textarea matInput [formControlName]="field.Code" autocomplete="off" [title]="field.Name"
+
+                    class="text-gray-700 text-md focus:outline-none focus:ring-0"></textarea>
+
+            </mat-form-field>
+
+            }
+
+
+
+            <!-- Campo de selección (select) -->
+
+            @case ("select") {
+
+            <mat-form-field class="w-full ">
+
+                <mat-hint class="text-sm font-normal text-gray-500">Selecciona una opción</mat-hint>
+
+                <mat-select [title]="field.Name" [formControlName]="field.Code" [id]="field.Code"
+
+                    [required]="field.IsRequired" [disabled]="!field.IsEditable">
+
+                    @for (opt of field.Options; track opt) {
+
+                    <!-- Se sube el Value o el Key ? -->
+
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+
+                    }
+
+                </mat-select>
+
+                @if (form.controls[field.Code].hasError('required') && form.controls[field.Code].touched) {
+
+                <mat-error class="text-xs text-red-600">
+
+                    Campo requerido
+
+                </mat-error>
+
+                }
+
+            </mat-form-field>
+
+            }
+
+
+
+            <!-- Campos de radio button -->
+
+            @case ("radio") {
+
+            <div class="mb-5">
+
+
+
+                <mat-radio-group class="flex items-start gap-2 mt-2 " [formControlName]="field.Code">
+
+                    @for (opt of field.Options; track opt) {
+
+                    <mat-radio-button [value]="opt.value">{{ opt.label }}</mat-radio-button>
+
+                    }
+
+                </mat-radio-group>
+
+            </div>
+
+            }
+
+            @case ("checkbox") {
+
+            <div class="flex justify-center">
+
+                <mat-checkbox [formControlName]="field.Code">{{ field.Name }}</mat-checkbox>
+
+            </div>
+
+            }
+
+
+
+
+
+            }
+
+        </div>
+
+
+
+        }
+
+
+
+
+        <!-- Botones del formulario -->
+
+        <div class="flex flex-col justify-center w-full gap-2 lg:mx-auto lg:w-1/2">
+
+          @if(PrimaryButtonText()){
+
+            <button type="submit"  mat-raised-button
+
+                color="primary" class="w-full font-semibold">{{PrimaryButtonText()}}</button>
+          }
+
+          @if(SecondaryButtonText()){
+                        <button  type="button"
+            (click)="cleanForm()"
+            color="secondary"
+                class="flex items-center justify-center w-full gap-2 pr-2 font-semibold text-blue-800" type="button" mat-flat-button>
+                {{SecondaryButtonText()}} </button>
+          }
+
+
+
+        </div>
+
+    </form>
+
+</div>

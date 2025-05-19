@@ -1,0 +1,30 @@
+<mat-table [dataSource]="dataSource()">
+  <!-- Columnas dinámicas -->
+  @for(column of displayedColumns(); track column) {
+    <ng-container [matColumnDef]="column">
+      <mat-header-cell *matHeaderCellDef>{{ column | titlecase }}</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row[column] }}</mat-cell>
+    </ng-container>
+  } @empty {
+    <h2>Sin columnas</h2>
+  }
+
+  <!-- Columna de acciones -->
+  <ng-container matColumnDef="actions" class="flex gap-2">
+    <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <button mat-mini-fab color="primary" (click)="sendData('upd',row)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-mini-fab color="accent" (click)="sendData('view',row)">
+        <mat-icon>visibility</mat-icon>
+      </button>
+      <button mat-mini-fab color="warn" (click)="sendData('del',row)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns().concat(['actions'])"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns().concat(['actions']);"></mat-row>
+</mat-table>
