@@ -7,11 +7,15 @@
       [(opened)]="isSidebarOpen"
       class="w-64"
     >
-      <mat-nav-list>
-        <a mat-list-item routerLink="/">Inicio</a>
-        <a mat-list-item routerLink="/perfil">Perfil</a>
-        <a mat-list-item routerLink="/configuracion">Configuración</a>
-        <a mat-list-item routerLink="/logout">Cerrar sesión</a>
+      <mat-nav-list class="">
+        <a mat-list-item routerLink="/">
+          <mat-icon matListIcon>home</mat-icon>
+          <span>Inicio</span>
+        </a>
+        <a mat-list-item routerLink="/Info">
+          <mat-icon matListIcon>info</mat-icon>
+          <span>Info</span>
+        </a>
       </mat-nav-list>
     </mat-sidenav>
   }
@@ -25,20 +29,19 @@
           <div class="flex items-center ">
             @if(showSidebar()) {
               <button
-              mat-icon-button
-              (click)="sidenav()!.toggle()"
-              aria-label="Toggle sidebar"
-              class="mr-2"
-            >
-              <mat-icon>menu</mat-icon>
-            </button>
+                mat-icon-button
+                (click)="sidenav()!.toggle()"
+                aria-label="Toggle sidebar"
+                class="mr-2"
+              >
+                <mat-icon>menu</mat-icon>
+              </button>
             }
 
             <h1 class="text-xl font-semibold">Mi Aplicación</h1>
           </div>
           <div>
             <!-- Puedes añadir un perfil o iconos aquí -->
-
           </div>
         </header>
       }

@@ -23,8 +23,15 @@ export interface  FieldTemplateModel {
   Rules?: Validators[]
   DefaultValue?: string | boolean | number | Date | [];
   TypeField: FieldType;
-  Options?: any;
+  Options?: Option[];
 }
+
+interface Option{
+  id?: string | number;
+  name: string;
+  value: string | number;
+}
+
 export enum FieldType {
   Text = 'text',
   Number = 'number',
@@ -34,9 +41,14 @@ export enum FieldType {
   Email = 'email',
   Password = 'password',
   Select = 'select',
+  SelectMultiple = 'select-multiple',
+  Autocomplete = 'autocomplete',
+  CascadeSelect = 'cascade-select',
   Radio = 'radio',
   Checkbox = 'checkbox',
   TextArea = 'textarea',
+  Image = 'image',
+  Video = 'video',
   File = 'file',
   Color = 'color',
   Range = 'range',

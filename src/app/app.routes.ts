@@ -14,5 +14,27 @@ export const routes: Routes = [
     data: {
       title: 'home'
     }
+  },
+  {
+    path: 'personas',
+    children:[
+        {
+    path: 'new-persona',
+    loadComponent: () => import('./core/pages/register/register.component').then(m => m.RegisterComponent),
+    data: {
+      title: 'new persona'
+    },
+
+  },
+          {
+    path: 'new-persona:id',
+    loadComponent: () => import('./core/pages/register/register.component').then(m => m.RegisterComponent),
+    data: {
+      title: 'edit persona'
+    },
+
   }
+    ]
+  }
+
 ];

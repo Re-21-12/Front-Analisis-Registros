@@ -3,13 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, map, of } from 'rxjs';
 import { environment } from '../../../../environment';
 import { BaseApiService } from '../interfaces/base-api';
-import { Region } from '../../shared/models/region';
+import { TipoPersona } from '../../shared/models/tipopersona';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RegionService implements BaseApiService<Region> {
-  private apiUrl = `${environment.apiUrl}Region`;
+export class TipoPersonaService implements BaseApiService<TipoPersona> {
+  private apiUrl = `${environment.apiUrl}TipoPersona`;
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
@@ -20,44 +20,44 @@ export class RegionService implements BaseApiService<Region> {
   private http = inject(HttpClient);
 
   /**
-   * Obtiene todas las Regions
+   * Obtiene todas las TipoPersonaes
    */
-  getAll(): Observable<Region[]> {
-    return this.http.get<Region[]>(this.apiUrl).pipe(
-      catchError(this.handleError<Region[]>('getAll', []))
+  getAll(): Observable<TipoPersona[]> {
+    return this.http.get<TipoPersona[]>(this.apiUrl).pipe(
+      catchError(this.handleError<TipoPersona[]>('getAll', []))
     );
   }
 
   /**
-   * Obtiene una Region por ID
+   * Obtiene una TipoPersona por su código
    */
-  getById(id: string): Observable<Region | null> {
-    return this.http.get<Region>(`${this.apiUrl}/${id}`).pipe(
-      catchError(this.handleError<Region>(`getById id=${id}`))
+  getById(id: string): Observable<TipoPersona | null> {
+    return this.http.get<TipoPersona>(`${this.apiUrl}/${id}`).pipe(
+      catchError(this.handleError<TipoPersona>(`getById id=${id}`))
     );
   }
 
   /**
-   * Crea una nueva Region
+   * Crea una nueva TipoPersona
    */
-  create(Region: Region): Observable<Region> {
-    return this.http.post<Region>(this.apiUrl, Region, this.httpOptions).pipe(
-      catchError(this.handleError<Region>('create'))
+  create(TipoPersona: TipoPersona): Observable<TipoPersona> {
+    return this.http.post<TipoPersona>(this.apiUrl, TipoPersona, this.httpOptions).pipe(
+      catchError(this.handleError<TipoPersona>('create'))
     );
   }
 
   /**
-   * Actualiza una Region existente
+   * Actualiza una TipoPersona existente
    */
-  update(id: string, Region: Region): Observable<boolean> {
-    return this.http.put(`${this.apiUrl}/${id}`, Region, this.httpOptions).pipe(
+  update(id: string, TipoPersona: TipoPersona): Observable<boolean> {
+    return this.http.put(`${this.apiUrl}/${id}`, TipoPersona, this.httpOptions).pipe(
       map(() => true),
       catchError(this.handleError<boolean>('update'))
     );
   }
 
   /**
-   * Elimina una Region
+   * Elimina una TipoPersona
    */
   delete(id: string): Observable<boolean> {
     return this.http.delete(`${this.apiUrl}/${id}`, this.httpOptions).pipe(

@@ -14,7 +14,7 @@
 
             <!-- Label del campo -->
 
-            <mat-label class="block mb-2 text-black text-pretty text-md"
+            <mat-label class="block mb-2 text-white text-pretty text-sm "
 
                 [ngClass]="field.Code === 'radio' ? 'font-normal' : 'font-semibold'" >
 
@@ -151,9 +151,12 @@
 
 
             </mat-form-field>
-
+<!-- Image -->
             }
+            @case ("image") {
+              <app-camera />
 
+              }
 
 
             <!-- Campo Slide Toggle -->
@@ -170,7 +173,7 @@
 
             <!-- Campo de fecha -->
 
-            @case ("datetime") {
+            @case ("date") {
 
             <mat-form-field class="w-full ">
 
@@ -330,7 +333,7 @@
 
                     <!-- Se sube el Value o el Key ? -->
 
-                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                    <mat-option [value]="opt.name">{{ opt.name }}</mat-option>
 
                     }
 
@@ -364,7 +367,7 @@
 
                     @for (opt of field.Options; track opt) {
 
-                    <mat-radio-button [value]="opt.value">{{ opt.label }}</mat-radio-button>
+                    <mat-radio-button [value]="opt.name">{{ opt.name }}</mat-radio-button>
 
                     }
 
@@ -405,7 +408,7 @@
 
           @if(PrimaryButtonText()){
 
-            <button type="submit"  mat-raised-button
+            <button type="submit"  mat-flat-button
 
                 color="primary" class="w-full font-semibold">{{PrimaryButtonText()}}</button>
           }
@@ -414,10 +417,16 @@
                         <button  type="button"
             (click)="cleanForm()"
             color="secondary"
-                class="flex items-center justify-center w-full gap-2 pr-2 font-semibold text-blue-800" type="button" mat-flat-button>
+                class="flex items-center justify-center w-full gap-2 pr-2 font-semibold text-blue-800" type="button" mat-stroked-button>
                 {{SecondaryButtonText()}} </button>
           }
-
+          @if(TercearyButtonText()){
+            <button  type="button"
+(click)="goToIndex()"
+color="secondary"
+    class="flex items-center justify-center w-full gap-2 pr-2 font-semibold text-blue-800" type="button" mat-raised-button>
+    {{TercearyButtonText()}} </button>
+}
 
 
         </div>

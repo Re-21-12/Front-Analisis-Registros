@@ -1,19 +1,21 @@
-<mat-card  appearance="outlined">
+<mat-card appearance="outlined">
   <mat-card-header>
-    <div mat-card-avatar ></div>
-    <mat-card-title>{{title()}}</mat-card-title>
-    <mat-card-subtitle>{{description()}}</mat-card-subtitle>
+    <div mat-card-avatar></div>
+    <mat-card-title>{{ title() }}</mat-card-title>
+    <mat-card-subtitle>{{ description() }}</mat-card-subtitle>
   </mat-card-header>
-  <img mat-card-image [src]=image() alt="Photo of a Person">
+
+  <img mat-card-image [src]="image()" alt="Photo of a Person" />
+
   <mat-card-content>
-
+    <!-- Puedes agregar contenido adicional aquí si es necesario -->
   </mat-card-content>
-<mat-card-footer>
-  <mat-chip-set >
-    @for(info of data(); track $index ){
-      <mat-chip>{{info}}</mat-chip>
-    }
 
-  </mat-chip-set>
-</mat-card-footer>
+  <mat-card-footer>
+    <mat-chip-set>
+      @for (info of data(); track $index) {
+        <mat-chip>{{ info }}</mat-chip>
+      }
+    </mat-chip-set>
+  </mat-card-footer>
 </mat-card>

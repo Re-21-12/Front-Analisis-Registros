@@ -77,19 +77,19 @@ export const Forms: TFormList = {
         Disabled: false,
         TypeField: FieldType.Select,
         Options: [
-          { value: 'A+', label: 'A+' },
-          { value: 'A-', label: 'A-' },
-          { value: 'B+', label: 'B+' },
-          { value: 'B-', label: 'B-' },
-          { value: 'AB+', label: 'AB+' },
-          { value: 'AB-', label: 'AB-' },
-          { value: 'O+', label: 'O+' },
-          { value: 'O-', label: 'O-' },
+          { value: 'A+', name: 'A+' },
+          { value: 'A-', name: 'A-' },
+          { value: 'B+', name: 'B+' },
+          { value: 'B-', name: 'B-' },
+          { value: 'AB+', name: 'AB+' },
+          { value: 'AB-', name: 'AB-' },
+          { value: 'O+', name: 'O+' },
+          { value: 'O-', name: 'O-' },
         ]
       },
       {
         Id: 7,
-        Code: 'regionId',
+        Code: 'region',
         Name: 'Región',
         IsRequired: false,
         IsEditable: true,
@@ -108,9 +108,8 @@ export const Forms: TFormList = {
         Disabled: false,
         TypeField: FieldType.Select,
         Options: [
-          { value: 'masculino', label: 'Masculino' },
-          { value: 'femenino', label: 'Femenino' },
-          { value: 'otro', label: 'Otro' },
+          { value: 'masculino', name: 'Masculino' },
+          { value: 'femenino', name: 'Femenino' },
         ]
       },
       {
@@ -121,7 +120,7 @@ export const Forms: TFormList = {
         IsEditable: true,
         Hidden: false,
         Disabled: false,
-        TypeField: FieldType.File,
+        TypeField: FieldType.Image,
       },
     ]
   },
@@ -139,7 +138,31 @@ export const Forms: TFormList = {
         MaxLength: 100,
         MinLength: 2,
         Disabled: false,
-        TypeField: FieldType.Text,
+        TypeField: FieldType.Select,
+        Options: [
+        ]
+      }
+    ]
+  },
+  tipopersona: {
+    Code: 'tipopersona',
+    Title: 'Tipo de Persona',
+    Fields: [
+      {
+        Id: 1,
+        Code: 'nombre',
+        Name: 'Nombre del Tipo de Persona',
+        IsRequired: true,
+        IsEditable: true,
+        Hidden: false,
+        MaxLength: 100,
+        MinLength: 2,
+        Disabled: false,
+        TypeField: FieldType.Select,
+        Options: [
+          { value: 'civil', name: 'civil' },
+          { value: 'registrador', name: 'registrador' },
+        ]
       }
     ]
   },
@@ -159,8 +182,8 @@ opciones:{
         Disabled: false,
         TypeField: FieldType.Select,
         Options: [
-          { value: 'persona', label: 'persona' },
-          { value: 'region', label: 'region' },
+          { value: 'persona', name: 'persona' },
+          { value: 'region', name: 'region' },
         ]
       },
     ]

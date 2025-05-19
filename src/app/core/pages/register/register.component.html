@@ -1,1 +1,5 @@
-<p>register works!</p>
+<app-primary-layout [showFooter]="true" [showHeader]="true">
+<div content>
+  <app-dynamic-form [inputForm]="displayForm$" [defaultData]="defaultFormData$" [PrimaryButtonText]="'Guardar'" [SecondaryButtonText]="'Limpiar'" [TercearyButtonText]="'Salir'" [listName]="listName$"/>
+</div>
+</app-primary-layout>

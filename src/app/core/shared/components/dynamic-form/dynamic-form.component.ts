@@ -32,14 +32,16 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, NgSwitchDefault, NgClass, AsyncPipe } from '@angular/common';
 
 
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 import { MatStepperModule } from '@angular/material/stepper';
 
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormTemplateModel } from './models/form-template';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
+import { CameraComponent } from '../camera/camera.component';
+import { Router } from '@angular/router';
+import { ChangeListSelectService } from '../../../services/change-list-select.service';
 
 
 const MATERIAL_IMPORT = [
@@ -80,7 +82,7 @@ const MATERIAL_IMPORT = [
 
   standalone: true,
 
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, NgClass, MATERIAL_IMPORT],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, NgClass, MATERIAL_IMPORT, CameraComponent],
 
   templateUrl: './dynamic-form.component.html',
 
@@ -94,12 +96,14 @@ const MATERIAL_IMPORT = [
 
 export class DynamicFormComponent implements OnInit {
 
-  private destroyRef$ = inject(DestroyRef)
-  _fieldControlService = inject(FormBuilderService)
-
+  private _destroyRef$ = inject(DestroyRef)
+  private _fieldControlService = inject(FormBuilderService)
+  private _router = inject(Router)
+  private _changeListSelectService = inject(ChangeListSelectService)
 
   @Input() inputForm : Observable<FormTemplateModel> | undefined
   @Input() defaultData : Observable<any> | undefined
+  @Input() listName : Observable<string> | undefined
 
 
 
@@ -108,7 +112,7 @@ export class DynamicFormComponent implements OnInit {
   formSubmit = output<string>()
   PrimaryButtonText = input<string>()
   SecondaryButtonText = input<string>()
-
+  TercearyButtonText = input<string>()
 
   form: FormGroup = new FormGroup({});
   maxDateValidation: DateTime = DateTime.now()
@@ -120,11 +124,11 @@ export class DynamicFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeSubscribe()
-
   }
+
   initializeSubscribe() {
     this.inputForm?.pipe(
-      takeUntilDestroyed(this.destroyRef$)
+      takeUntilDestroyed(this._destroyRef$)
     ).subscribe({
       next: (data: FormTemplateModel) => {
         this.formData.set(data);
@@ -134,16 +138,47 @@ export class DynamicFormComponent implements OnInit {
     });
 
     this.defaultData?.pipe(
-      takeUntilDestroyed(this.destroyRef$)
+      takeUntilDestroyed(this._destroyRef$)
     ).subscribe({
       next: (data: any) => {
         console.log('defaultData', data)
           this.form.patchValue(data);
       }
     });
+    this.listName?.pipe(
+      takeUntilDestroyed(this._destroyRef$)
+    ).subscribe({
+      next: (listName: string) => {
+        this._changeListSelectService.initialize(listName)
+        this.setOptions(listName)
+      }
+    })
+
 
   }
+setOptions = (listName: string) => {
+  this._changeListSelectService.changeList.pipe(
+    takeUntilDestroyed(this._destroyRef$)
+  ).subscribe({
+    next: (data: any) => {
+      console.log('llego')
+      const mappedData = data.map((dato: any) => {
+        const [key, value] = Object.values(dato);
+        return { id: key, name: value };
+      });
 
+      this.formData().Fields.forEach((field) => {
+      console.log('fieldCode', field.Code)
+
+        if (field.Code === listName) {
+      console.log('listName', listName)
+
+          field.Options = mappedData;
+        }
+      });
+    }
+  });
+}
 
 
 
@@ -272,7 +307,9 @@ export class DynamicFormComponent implements OnInit {
   cleanForm = () =>{
     this.form.reset()
   }
-
+  goToIndex = ( ) =>{
+    this._router.navigate(['home'])
+  }
 
 }
 
