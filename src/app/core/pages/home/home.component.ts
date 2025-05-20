@@ -4,7 +4,7 @@ import { PrimaryLayoutComponent } from '../../layouts/primary-layout/primary-lay
 import { FormComponent } from "../form/form.component";
 import { DynamicTableComponent } from "../../shared/components/dynamic-table/dynamic-table.component";
 import { PersonaService } from '../../api/services/persona.service';
-import { Persona } from '../../shared/models/persona';
+import { PersonaResponse } from '../../shared/models/persona';
 import { DynamicCardComponent } from '../../shared/components/dynamic-card/dynamic-card.component';
 
 interface ChildData {
@@ -29,17 +29,19 @@ this.getPersonalData()
 
 
 getPersonalData = () => {
-  this.personService.getAll().subscribe((data: Persona[]) => {
+  this.personService.getAll().subscribe((data: PersonaResponse[]) => {
     this.data = data.map(p => ({
-      title: `${p.primerNombre}${p.primerApellido}`.trim(),
-      description: `${p.tipoPersona} ${p.estado}`.trim(),
+      title: `${p.id}`.trim(),
+      description: `${p.primerNombre}${p.primerApellido}`.trim(),
       dataFromPersona: [
         `Fecha de Nacimiento: ${new Date(p.fechaDeNacimiento).toLocaleDateString()}`,
         `Tipo de Sangre: ${p.tipoDeSangre || 'N/A'}`,
         `Genero: ${p.genero || 'N/A'}`,
         `Estado: ${p.estado || 'N/A'} `,
+        `Region: ${p.regionNombre || 'N/A'}`,
+        `Tipo de Persona: ${p.tipoPersonaNombre || 'N/A'}`,
       ],
-      image: p.foto ? `data:image/png;base64,${p.foto}` : "N/A"
+      image:  `data:image/jpg;base64,${p.foto}`
     }));
   });
 }

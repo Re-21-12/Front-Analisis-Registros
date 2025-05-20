@@ -1,0 +1,10 @@
+@if (text()) {
+  <button mat-icon-button
+          [cdkCopyToClipboard]="text()"
+          (click)="onCopy()"
+          [matTooltip]="currentTooltip()"
+          [disabled]="!text()"
+          class="transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed {{buttonClass()}}">
+    <mat-icon [class.text-green-500]="isCopied()">{{ currentIcon() }}</mat-icon>
+  </button>
+}

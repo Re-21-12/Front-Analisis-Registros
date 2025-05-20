@@ -3,11 +3,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, map, of } from 'rxjs';
 import { environment } from '../../../../environment';
 import { BaseApiService } from '../interfaces/base-api';
-import { Persona } from '../../shared/models/persona';
+import { PersonaRequest, PersonaResponse } from '../../shared/models/persona';
 @Injectable({
   providedIn: 'root'
 })
-export class PersonaService implements BaseApiService<Persona> {
+export class PersonaService implements BaseApiService<PersonaResponse | PersonaRequest > {
   private apiUrl = `${environment.apiUrl}Persona`;
   private httpOptions = {
     headers: new HttpHeaders({
@@ -21,34 +21,34 @@ export class PersonaService implements BaseApiService<Persona> {
   /**
    * Obtiene todas las Personaes
    */
-  getAll(): Observable<Persona[]> {
-    return this.http.get<Persona[]>(this.apiUrl).pipe(
-      catchError(this.handleError<Persona[]>('getAll', []))
+  getAll(): Observable<PersonaResponse[]> {
+    return this.http.get<PersonaResponse[]>(this.apiUrl).pipe(
+      catchError(this.handleError<PersonaResponse[]>('getAll', []))
     );
   }
 
   /**
    * Obtiene una Persona por su código
    */
-  getById(id: string): Observable<Persona | null> {
-    return this.http.get<Persona>(`${this.apiUrl}/${id}`).pipe(
-      catchError(this.handleError<Persona>(`getById id=${id}`))
+  getById(id: string): Observable<PersonaResponse | null> {
+    return this.http.get<PersonaResponse>(`${this.apiUrl}/${id}`).pipe(
+      catchError(this.handleError<PersonaResponse>(`getById id=${id}`))
     );
   }
 
   /**
    * Crea una nueva Persona
    */
-  create(Persona: Persona): Observable<Persona> {
-    return this.http.post<Persona>(this.apiUrl, Persona, this.httpOptions).pipe(
-      catchError(this.handleError<Persona>('create'))
+  create(Persona: PersonaRequest): Observable<PersonaRequest> {
+    return this.http.post<PersonaRequest>(this.apiUrl, Persona, this.httpOptions).pipe(
+      catchError(this.handleError<PersonaRequest>('create'))
     );
   }
 
   /**
    * Actualiza una Persona existente
    */
-  update(id: string, Persona: Persona): Observable<boolean> {
+  update(id: string, Persona: PersonaRequest): Observable<boolean> {
     return this.http.put(`${this.apiUrl}/${id}`, Persona, this.httpOptions).pipe(
       map(() => true),
       catchError(this.handleError<boolean>('update'))

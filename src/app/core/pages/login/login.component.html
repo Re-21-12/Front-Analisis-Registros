@@ -1,0 +1,22 @@
+<div class="min-h-screen flex items-center justify-center bg-black py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <div>
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-100">
+        Bienvenido
+      </h2>
+    </div>
+
+    <app-dynamic-form [inputForm]="displayForm$" [PrimaryButtonText]="'Iniciar Sesion'" (formSubmit)="listenSubmit($event)" class="w-full"></app-dynamic-form>
+
+    <div class="flex items-center justify-center ">
+
+      <button type="button" mat-stroked-button class="w-full p-2 mx-6 " (click)="preregister()">Preregistro</button>
+    </div>
+
+    <div class="flex justify-start mt-6">
+      <mat-checkbox color="primary" class="text-gray-100">
+        Recuerdame
+      </mat-checkbox>
+    </div>
+  </div>
+</div>

@@ -1,20 +1,37 @@
-<mat-card appearance="outlined">
-  <mat-card-header>
-    <div mat-card-avatar></div>
-    <mat-card-title>{{ title() }}</mat-card-title>
-    <mat-card-subtitle>{{ description() }}</mat-card-subtitle>
-  </mat-card-header>
+<mat-card appearance="outlined" class="id-card bg-gradient-to-br from-cyan-400 via-teal-300 to-blue-300 shadow-xl rounded-2xl p-6 max-w-md mx-auto border border-gray-300 hover:shadow-2xl transition-shadow duration-300" style="box-shadow: 0 10px 25px -5px rgba(56, 178, 172, 0.3), 0 10px 10px -5px rgba(6, 182, 212, 0.2);">
+  <div class="flex flex-col items-center">
+    <!-- Imagen centrada, más grande -->
+    <div class="w-40 h-40 rounded-full overflow-hidden shadow-md border-4 border-gray-300 mb-4">
+      <img
+        mat-card-image
+        [src]="image()"
+        alt="Foto de la persona"
+        class="w-full h-full object-cover"
+      />
+    </div>
 
-  <img mat-card-image [src]="image()" alt="Photo of a Person" />
+    <!-- Nombre y subtítulo centrados -->
+    <div class="text-center">
+      <mat-card-title class="text-2xl font-bold text-black mb-1">{{ title() }}</mat-card-title>
+      <mat-card-subtitle class="text-sm text-black">{{ description() }}</mat-card-subtitle>
+    </div>
+  </div>
 
-  <mat-card-content>
-    <!-- Puedes agregar contenido adicional aquí si es necesario -->
+  <!-- Línea divisora -->
+  <div class="my-4 border-t border-dashed border-gray-300"></div>
+
+  <!-- Contenido adicional -->
+  <mat-card-content class="text-sm text-black space-y-2 text-center">
+    <!-- Puedes agregar más detalles aquí si quieres -->
   </mat-card-content>
 
-  <mat-card-footer>
-    <mat-chip-set>
+  <!-- Chips de información -->
+  <mat-card-footer class="mt-4">
+    <mat-chip-set class="flex flex-wrap justify-center gap-2">
       @for (info of data(); track $index) {
-        <mat-chip>{{ info }}</mat-chip>
+        <mat-chip class="bg-blue-100 text-black px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+          {{ info }}
+        </mat-chip>
       }
     </mat-chip-set>
   </mat-card-footer>

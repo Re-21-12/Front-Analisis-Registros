@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RegisterComponent } from './register.component';
+import { CopyClipboardComponent } from './copy-clipboard.component';
 
-describe('RegisterComponent', () => {
-  let component: RegisterComponent;
-  let fixture: ComponentFixture<RegisterComponent>;
+describe('CopyClipboardComponent', () => {
+  let component: CopyClipboardComponent;
+  let fixture: ComponentFixture<CopyClipboardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RegisterComponent]
+      imports: [CopyClipboardComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(RegisterComponent);
+    fixture = TestBed.createComponent(CopyClipboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

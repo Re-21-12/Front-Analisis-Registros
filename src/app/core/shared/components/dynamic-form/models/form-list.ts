@@ -10,6 +10,16 @@ export const Forms: TFormList = {
     Title: 'Persona',
     Fields: [
       {
+        Id: 13,
+        Code: 'id',
+        Name: 'AADHAAR',
+        IsRequired: false,
+        IsEditable: false,
+        Hidden: true,
+        Disabled: true,
+        TypeField: FieldType.Text,
+      },
+      {
         Id: 1,
         Code: 'primerNombre',
         Name: 'Primer Nombre',
@@ -25,11 +35,11 @@ export const Forms: TFormList = {
         Id: 2,
         Code: 'segundoNombre',
         Name: 'Segundo Nombre',
-        IsRequired: false,
+        IsRequired: true,
         IsEditable: true,
         Hidden: false,
         MaxLength: 50,
-        MinLength: 0,
+        MinLength: 2,
         Disabled: false,
         TypeField: FieldType.Text,
       },
@@ -49,11 +59,11 @@ export const Forms: TFormList = {
         Id: 4,
         Code: 'segundoApellido',
         Name: 'Segundo Apellido',
-        IsRequired: false,
+        IsRequired: true,
         IsEditable: true,
         Hidden: false,
         MaxLength: 50,
-        MinLength: 0,
+        MinLength: 2,
         Disabled: false,
         TypeField: FieldType.Text,
       },
@@ -69,9 +79,19 @@ export const Forms: TFormList = {
       },
       {
         Id: 6,
+        Code: 'fechaDeResidencia',
+        Name: 'Fecha inicio de Residencia',
+        IsRequired: true,
+        IsEditable: true,
+        Hidden: false,
+        Disabled: false,
+        TypeField: FieldType.Date,
+      },
+      {
+        Id: 7,
         Code: 'tipoDeSangre',
         Name: 'Tipo de Sangre',
-        IsRequired: false,
+        IsRequired: true,
         IsEditable: true,
         Hidden: false,
         Disabled: false,
@@ -88,21 +108,32 @@ export const Forms: TFormList = {
         ]
       },
       {
-        Id: 7,
-        Code: 'region',
+        Id: 8,
+        Code: 'regionId',
         Name: 'Región',
         IsRequired: false,
         IsEditable: true,
         Hidden: false,
         Disabled: false,
         TypeField: FieldType.Select,
-        Options: [] // Puedes llenar esto dinámicamente con las regiones disponibles
+        Options: [] // Llenar dinámicamente con las regiones disponibles
       },
       {
-        Id: 8,
+        Id: 9,
+        Code: 'tipoPersonaId',
+        Name: 'Tipo de Persona',
+        IsRequired: false,
+        IsEditable: true,
+        Hidden: true,
+        Disabled: false,
+        TypeField: FieldType.Text,
+        DefaultValue: '2',
+      },
+      {
+        Id: 10,
         Code: 'genero',
         Name: 'Género',
-        IsRequired: false,
+        IsRequired: true,
         IsEditable: true,
         Hidden: false,
         Disabled: false,
@@ -113,15 +144,26 @@ export const Forms: TFormList = {
         ]
       },
       {
-        Id: 9,
+        Id: 11,
         Code: 'foto',
         Name: 'Foto',
-        IsRequired: false,
+        IsRequired: true,
         IsEditable: true,
         Hidden: false,
         Disabled: false,
         TypeField: FieldType.Image,
       },
+      {
+        Id: 12,
+        Code: 'estado',
+        Name: 'Estado',
+        IsRequired: true,
+        IsEditable: true,
+        Hidden: true,
+        Disabled: false,
+        TypeField: FieldType.Text,
+        DefaultValue: 'Pendiente',
+      }
     ]
   },
   region: {
@@ -166,9 +208,9 @@ export const Forms: TFormList = {
       }
     ]
   },
-opciones:{
-  Code: 'opciones',
-  Title: 'Opciones',
+  opciones: {
+    Code: 'opciones',
+    Title: 'Opciones',
     Fields: [
       {
         Id: 1,
@@ -187,5 +229,24 @@ opciones:{
         ]
       },
     ]
-}
+  },
+  login:{
+    Code: 'login',
+    Title: 'Login',
+    Fields: [
+      {
+        Id: 1,
+        Code: 'id',
+        Name: 'AADHAAR',
+        IsRequired: true,
+        IsEditable: true,
+        Hidden: false,
+        MaxLength: 50,
+        MinLength: 2,
+        Disabled: false,
+        TypeField: FieldType.Text,
+      },
+
+    ]
+  }
 }

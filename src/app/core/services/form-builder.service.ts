@@ -1,35 +1,29 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { FieldTemplateModel, FormTemplateModel } from '../shared/components/dynamic-form/models/form-template';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FormBuilderService {
 
-  private _formBuilder = inject(FormBuilder);
-
   constructor() { }
 
   toFormGroup(fields: FieldTemplateModel[], form: FormTemplateModel): FormGroup {
-
-    const group:any = {}
+    const group: Record<string, FormControl> = {};
 
     fields.forEach((field: FieldTemplateModel) => {
-      let validators :any = []
+      let validators: any[] = [];
 
       if(field.Rules !== undefined){
-        field.Rules.forEach((rule) =>{
-          validators.push(rule)
-        })
+        field.Rules.forEach((rule) => {
+          validators.push(rule);
+        });
       }
 
-      group[field.Code] = this._formBuilder.control('', validators)
+      group[field.Code] = new FormControl({value: '',disabled: field.Disabled }, [...validators]);
+    });
 
-    })
-
-    const formGroup = this._formBuilder.group(group);
-
-    return formGroup;
+    return new FormGroup(group);
   }
 }

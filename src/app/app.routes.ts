@@ -3,10 +3,8 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./core/pages/form/form.component').then(m => m.FormComponent),
-    data: {
-      title: 'form'
-    }
+    redirectTo: 'login',
+    pathMatch: 'full'
   },
   {
     path: 'home',
@@ -16,25 +14,36 @@ export const routes: Routes = [
     }
   },
   {
-    path: 'personas',
-    children:[
-        {
-    path: 'new-persona',
-    loadComponent: () => import('./core/pages/register/register.component').then(m => m.RegisterComponent),
+    path: 'login',
+    loadComponent: () => import('./core/pages/login/login.component').then(m => m.LoginComponent),
     data: {
-      title: 'new persona'
-    },
-
+      title: 'login'
+    }
   },
-          {
-    path: 'new-persona:id',
-    loadComponent: () => import('./core/pages/register/register.component').then(m => m.RegisterComponent),
-    data: {
-      title: 'edit persona'
-    },
-
-  }
+  {
+    path: 'personas',
+    children: [
+      {
+        path: 'new-persona',
+        loadComponent: () => import('./core/pages/register/register.component').then(m => m.RegisterComponent),
+        data: {
+          title: 'new persona'
+        }
+      },
+      {
+        path: 'new-persona/:id',
+        loadComponent: () => import('./core/pages/register/register.component').then(m => m.RegisterComponent),
+        data: {
+          title: 'edit persona'
+        }
+      },
+      {
+        path: 'new-persona/:id/detail',
+        loadComponent: () => import('./core/pages/register/register.component').then(m => m.RegisterComponent),
+        data: {
+          title: 'detail persona'
+        }
+      }
     ]
   }
-
 ];

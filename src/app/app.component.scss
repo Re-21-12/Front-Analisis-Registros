@@ -1,1 +1,9 @@
 @import "tailwindcss";
+::ng-deep .mat-mdc-card-subtitle {
+  color: black !important;
+}
+
+::ng-deep .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mdc-evolution-chip__text-label {
+  color: black !important;
+
+  }

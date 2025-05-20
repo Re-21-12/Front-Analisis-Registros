@@ -1,7 +1,7 @@
-import { Persona } from "./persona";
+import { PersonaResponse } from "./persona";
 
 export interface TipoPersona {
 id: number;
 nombre: string;
-personas: Persona[]
+personas: PersonaResponse[]
 }

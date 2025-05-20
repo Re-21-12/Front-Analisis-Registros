@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-import { Component, DestroyRef, ElementRef, EventEmitter, inject, Input, input, model, OnInit, output, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, EventEmitter, inject, Input, input, model, OnInit, output, signal, ViewChild, viewChild } from '@angular/core';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
@@ -104,8 +104,8 @@ export class DynamicFormComponent implements OnInit {
   @Input() inputForm : Observable<FormTemplateModel> | undefined
   @Input() defaultData : Observable<any> | undefined
   @Input() listName : Observable<string> | undefined
-
-
+  @Input() stateForm : Observable<string> | undefined
+@ViewChild(CameraComponent) cameraComponent!: CameraComponent;
 
   formData = signal<FormTemplateModel>({} as FormTemplateModel)
 
@@ -113,7 +113,7 @@ export class DynamicFormComponent implements OnInit {
   PrimaryButtonText = input<string>()
   SecondaryButtonText = input<string>()
   TercearyButtonText = input<string>()
-
+  cameraField: any;
   form: FormGroup = new FormGroup({});
   maxDateValidation: DateTime = DateTime.now()
 
@@ -153,9 +153,37 @@ export class DynamicFormComponent implements OnInit {
         this.setOptions(listName)
       }
     })
+    this.stateForm?.pipe(
+      takeUntilDestroyed(this._destroyRef$)
+    ).subscribe({
+      next: (state: string) => {
+        if (state === 'disabled') {
+          this.form.disable()
+        }
+        if (state === 'enabled') {
+          this.form.enable()
+        }
+
+      }
+    })
 
 
   }
+
+  onImageCaptured(base64Image: string | null) {
+    if (this.cameraField && this.form) {
+      this.form.get(this.cameraField.Code)?.setValue(base64Image);
+
+      // Si necesitas el base64 puro (sin el prefijo data:image/jpeg;base64,)
+      if (base64Image) {
+        const pureBase64 = base64Image.split(',')[1];
+        console.log('Base64 puro:', pureBase64);
+        this.form.get('foto')?.setValue(pureBase64);
+      }
+    }
+  }
+
+
 setOptions = (listName: string) => {
   this._changeListSelectService.changeList.pipe(
     takeUntilDestroyed(this._destroyRef$)
@@ -168,11 +196,7 @@ setOptions = (listName: string) => {
       });
 
       this.formData().Fields.forEach((field) => {
-      console.log('fieldCode', field.Code)
-
         if (field.Code === listName) {
-      console.log('listName', listName)
-
           field.Options = mappedData;
         }
       });
@@ -185,15 +209,36 @@ setOptions = (listName: string) => {
 
 
   configureForm = () => {
-    console.log(this.formData().Fields)
+    console.log(this.formData().Fields);
     this.form = this._fieldControlService.toFormGroup(this.formData().Fields, this.formData());
 
+    this.formData().Fields.forEach((field) => {
+      if(field.Disabled)
+        this.form.get(field.Code)?.disable()
+    })
+    // Buscar el campo de tipo cámara
+    this.cameraField = this.formData().Fields.find(field => field.TypeField === 'image');
 
+    // Si hay un campo de cámara, inicializarlo con null
+    if (this.cameraField) {
+      this.form.get(this.cameraField.Code)?.setValue(null);
+    }
+    this.formData().Fields.forEach((field) => {
+      this.form.get(field.Code)?.patchValue(field.DefaultValue);
+    })
 
+    this.disabledFields()
 
   }
 
-
+disabledFields = () =>{
+  this.formData().Fields.forEach((field) => {
+    console.log(field.Disabled)
+    if(field.Disabled){
+      this.form.get(field.Code)?.disable()
+    }
+  })
+}
 
 
 
@@ -246,69 +291,48 @@ setOptions = (listName: string) => {
 
 
   checkForm = (): boolean => {
-
-    /*     const approvedRange = this.form.controls['DateRangeApproved']
-
-        const dateRange = this.form.controls['DateRange'] */
-
-
-
-    /*     if (dateRange && approvedRange) {
-
-          return this.range.invalid || this.ApprovedDateRange.invalid
-
-        }
-
-
-
-        if (approvedRange) {
-
-          return this.ApprovedDateRange.invalid
-
-        }
-
-
-
-        if (dateRange) {
-
-          return this.range.invalid
-
-        }
-
-     */
-
-
-
-    // return this.form.invalid || this.range.invalid || this.ApprovedDateRange.invalid
-
     return this.form.invalid
-
   }
 
 
 
+// ...existing code...
 
+onSubmit(): void {
+  if (this.form.invalid) return;
 
+  // Formatear fechas si es necesario
+  const formValues = this.form.value;
+  const formattedValues = { ...formValues };
 
+  this.formData().Fields.forEach((field) => {
+    if (field.TypeField === 'date' && formValues[field.Code]) {
+      const dateValue = formValues[field.Code];
+      const parsedDate = DateTime.fromJSDate(new Date(dateValue));
+      formattedValues[field.Code] = parsedDate.toFormat('yyyy-MM-dd'); // o .toISO()
+      this.form.get(field.Code)?.setValue(formattedValues[field.Code]); // Actualiza el formulario con el valor formateado
+    }
+  });
 
-  onSubmit() {
-
-
-
-
-
-    this.formSubmit.emit(JSON.stringify({ form: this.form.getRawValue() }));
-
-    console.log(this.form.getRawValue())
-
-
-
+  // Establecer la imagen si existe componente de cámara
+  if (this.cameraComponent && this.cameraField) {
+    const currentImage = this.cameraComponent.getPureBase64();
+    if (currentImage) {
+      this.form.get(this.cameraField.Code)?.setValue(currentImage);
+    }
   }
+
+  const formData = this.form.getRawValue();
+  this.formSubmit.emit(JSON.stringify(formData));
+  console.log('formData', formData);
+}
+
+
   cleanForm = () =>{
     this.form.reset()
   }
   goToIndex = ( ) =>{
-    this._router.navigate(['home'])
+    this._router.navigate([''])
   }
 
 }

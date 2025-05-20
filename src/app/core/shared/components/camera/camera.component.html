@@ -4,27 +4,30 @@
     <button
       class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-offset-2 transition-all shadow-md hover:shadow-lg flex items-center"
       (click)="activateCamera()"
+      type="button"
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
-      Activar Camara
+      Activar Cámara
     </button>
   }
 
   <!-- Camera interface -->
-  @if(cameraActive && !error){
+  @if(cameraActive && !error) {
     <div class="w-full max-w-2xl">
       <!-- Frame container with toggle button -->
       <div class="relative mx-auto border-4 border-gray-200 rounded-lg shadow-xl overflow-hidden bg-gray-100"
-          style="width: {{WIDTH}}px; height: {{HEIGHT}}px">
+          [style.width.px]="WIDTH"
+          [style.height.px]="HEIGHT">
 
         <!-- Toggle camera button -->
         <button
           class="absolute top-2 right-2 z-20 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all"
           (click)="toggleCameraVisibility()"
-          [title]="cameraVisible ? 'Hide camera' : 'Show camera'"
+          [title]="cameraVisible ? 'Ocultar cámara' : 'Mostrar cámara'"
+          type="button"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             @if(cameraVisible) {
@@ -39,9 +42,11 @@
         <!-- Video element -->
         <video
           class="absolute inset-0 object-cover w-full h-full transition-opacity duration-300 z-10"
-          [class.opacity-100]="!isCaptured && cameraVisible"
-          [class.opacity-0]="isCaptured || !cameraVisible"
-          [class.invisible]="isCaptured || !cameraVisible"
+          [ngClass]="{
+            'opacity-100': !isCaptured && cameraVisible,
+            'opacity-0': isCaptured || !cameraVisible,
+            'invisible': isCaptured || !cameraVisible
+          }"
           #video
           id="video"
           [width]="WIDTH"
@@ -52,9 +57,11 @@
         <!-- Canvas element -->
         <canvas
           class="absolute inset-0 object-cover w-full h-full transition-opacity duration-300 z-10"
-          [class.opacity-100]="isCaptured"
-          [class.opacity-0]="!isCaptured"
-          [class.invisible]="!isCaptured"
+          [ngClass]="{
+            'opacity-100': isCaptured,
+            'opacity-0': !isCaptured,
+            'invisible': !isCaptured
+          }"
           #canvas
           id="canvas"
           [width]="WIDTH"
@@ -77,17 +84,19 @@
           <button
             class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-2 transition-all shadow-md hover:shadow-lg flex items-center"
             (click)="capture()"
+            type="button"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            Take Photo
+            Tomar foto
           </button>
         } @else if(isCaptured) {
           <button
             class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 focus:ring-offset-2 transition-all shadow-md hover:shadow-lg flex items-center"
             (click)="removeCurrent()"
+            type="button"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -96,7 +105,7 @@
           </button>
           <button
             class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-offset-2 transition-all shadow-md hover:shadow-lg flex items-center"
-            (click)="uploadPhoto()"
+            type="button"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -109,11 +118,12 @@
         <button
           class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-offset-2 transition-all shadow-md hover:shadow-lg flex items-center"
           (click)="deactivateCamera()"
+          type="button"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
-          Cerrar camara
+          Cerrar cámara
         </button>
       </div>
     </div>
@@ -126,12 +136,13 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
-        <h3 class="text-lg font-semibold">Camera Error</h3>
+        <h3 class="text-lg font-semibold">Error de cámara</h3>
       </div>
       <p>{{ error }}</p>
       <button
         class="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
         (click)="setupDevices()"
+        type="button"
       >
         Intentar de nuevo
       </button>
@@ -145,15 +156,15 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
         </svg>
-        Galeria
+        Galería
       </h3>
       <ul class="flex flex-wrap gap-4 justify-center p-0 list-none">
-        @for(src of captures; track $index; let idx = $index){
+        @for(src of captures; track $index; let idx = $index) {
           <li
             class="cursor-pointer border-2 border-transparent hover:border-blue-400 rounded-lg transition-all shadow-md hover:shadow-lg overflow-hidden relative group"
             (click)="setPhoto(idx)"
           >
-            <img [src]="src" class="h-24 w-auto object-cover" />
+            <img [src]="src" class="h-24 w-auto object-cover" alt="Thumbnail" />
             <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

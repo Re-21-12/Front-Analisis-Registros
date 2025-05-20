@@ -1,4 +1,4 @@
-import { Persona } from './../../shared/models/persona';
+import { PersonaResponse } from './../../shared/models/persona';
 import { Component, inject, Injector, OnInit, signal, Type } from '@angular/core';
 import {  DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { Forms } from '../../shared/components/dynamic-form/models/form-list';

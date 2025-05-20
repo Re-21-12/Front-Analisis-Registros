@@ -21,7 +21,7 @@ private _injector = inject(Injector)
 
   private servicesMap: {[key: string]: Type<BaseApiService<any>>} = {
   'persona': PersonaService,
-  'region': RegionService,
+  'regionId': RegionService,
   'tipo-persona': TipoPersonaService,
 
 };

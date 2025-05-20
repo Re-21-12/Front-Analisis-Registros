@@ -1,22 +1,31 @@
 import { PrimaryLayoutComponent } from './../../layouts/primary-layout/primary-layout.component';
 import { DynamicFormComponent } from './../../shared/components/dynamic-form/dynamic-form.component';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, model, OnInit, signal, viewChild } from '@angular/core';
 import { PersonaService } from '../../api/services/persona.service';
 import { FormTemplateModel } from '../../shared/components/dynamic-form/models/form-template';
 import { Forms } from '../../shared/components/dynamic-form/models/form-list';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Persona } from '../../shared/models/persona';
+import { PersonaRequest, PersonaResponse } from '../../shared/models/persona';
 import { BehaviorSubject } from 'rxjs';
+import { MatStepper, MatStepperModule } from '@angular/material/stepper';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { NgClass } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { CopyClipboardComponent } from '../../shared/components/copy-clipboard/copy-clipboard.component';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-register',
-  imports: [PrimaryLayoutComponent, DynamicFormComponent, ],
+  imports: [PrimaryLayoutComponent, DynamicFormComponent,MatStepperModule, MatIconModule, MatButtonModule,NgClass, MatFormFieldModule, CopyClipboardComponent,FormsModule, MatInputModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent implements OnInit {
   ngOnInit(): void {
-    this.setListName()
+    this.configureForm()
+    this.confirmData()
     // Initialization logic here
   }
   private _router = inject(Router);
@@ -24,33 +33,76 @@ export class RegisterComponent implements OnInit {
   private _destroyRef$  = inject(DestroyRef);
   private _activatedRoute$ = inject(ActivatedRoute);
 
-  displayForm$ = new BehaviorSubject<FormTemplateModel>({...Forms["persona"]})
+  form: FormTemplateModel = {...Forms["persona"]};
+  displayForm$ = new BehaviorSubject<FormTemplateModel>({} as FormTemplateModel);
   defaultFormData$ = new BehaviorSubject<any>({});
   listName$ = new BehaviorSubject<string>("");
 
-
-  setListName = () => {
-    this.listName$.next("region")
+  AADHAAR = model<string>("");
+  stepper = viewChild<MatStepper>('stepper');
+  titleForm = signal<string>("Registrar Datos");
+  idFromUrl = signal<string>("");
+  configureForm = () => {
+    this.displayForm$.next(this.form)
+    this.listName$.next("regionId")
   }
-  getData = () =>{
+  confirmData = () =>{
+
+    this.form.Fields.forEach((field) => {
+      if(field.Name === "Estado")
+        field.DefaultValue = "Confirmado"
+      if(field.Name === "AADHAAR"){
+        field.Hidden = this.idFromUrl() ? false : true
+        field.DefaultValue = this.idFromUrl()
+        field.Disabled = true
+      }
+
+    })
+
     this._activatedRoute$.params.subscribe((params) => {
-      const id = params['id']
-      if (!id) return
-        this._personService.getById(id).subscribe((data) => {
+      this.idFromUrl.set (params['id'])
+      if (!this.idFromUrl()) return
+      this.titleForm.set("Confirmar Datos")
+        this._personService.getById(this.idFromUrl()).subscribe((data: PersonaResponse | null) => {
           this.defaultFormData$.next(data)
         })
+
     })
   }
+  goConfirmData = ()=>{
+    this._router.navigate(['personas/new-persona', this.AADHAAR()])
+  }
+goHome = () =>{
+        this._router.navigate([''])
 
-  listenSubmit = ($event : any) =>{
-    this._personService.create($event).subscribe({
-      next: (data) => {
-        this._router.navigate(['home'])
+}
+  listenSubmit = ($event : string) =>{
+    const persona: PersonaRequest = JSON.parse($event)
+    if(this.idFromUrl()){
+      this._personService.update(this.idFromUrl(), persona).subscribe({
+        next: (data:boolean) => {
+          if  (!data) return
+        this.AADHAAR.set(this.idFromUrl())
+          this.stepper()!.next();
+        },
+        error: (error) => {
+          console.error('Error updating persona:', error);
+        }
+      })
+    }else{
+    this._personService.create(persona).subscribe({
+      next: (data:PersonaRequest) => {
+       if  (!data) return
+        console.log('Persona created successfully:', data);
+        this.AADHAAR.set(data.id!)
+        this.stepper()!.next();
       },
       error: (error) => {
         console.error('Error creating persona:', error);
       }
     })
+    }
+
   }
 
 

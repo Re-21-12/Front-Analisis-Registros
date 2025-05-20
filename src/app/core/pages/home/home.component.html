@@ -1,8 +1,13 @@
-<app-primary-layout [showSidebar]="true" [showHeader]="true" [showFooter]="true" >
-<div content>
-  @for(person of data; track $index){
-    <app-dynamic-card [title]="person.title" [description]="person.description" [data]="person.dataFromPersona"/>
+<app-primary-layout [showSidebar]="true" [showHeader]="true" [showFooter]="true">
+  <div content class="grid grid-cols-1 md:grid-cols-3 overflow-y p-2 max-h-[calc(100vh-200px)]">
+    @for(person of data; track $index){
+      <app-dynamic-card
+        [title]="person.title"
+        [description]="person.description"
+        [data]="person.dataFromPersona"
+        [image]="person.image"
+        class="w-full transition-all duration-300 hover:shadow-lg hover:scale-105"
+      />
     }
-</div>
-
+  </div>
 </app-primary-layout>

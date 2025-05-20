@@ -1,5 +1,62 @@
 <app-primary-layout [showFooter]="true" [showHeader]="true">
-<div content>
-  <app-dynamic-form [inputForm]="displayForm$" [defaultData]="defaultFormData$" [PrimaryButtonText]="'Guardar'" [SecondaryButtonText]="'Limpiar'" [TercearyButtonText]="'Salir'" [listName]="listName$"/>
-</div>
+  <div content>
+    <mat-stepper #stepper [linear]="true">
+      <mat-step>
+        <ng-template matStepLabel>Registro</ng-template>
+         <h1 class="text-center text-4xl">{{titleForm()}}</h1>
+        <app-dynamic-form [inputForm]="displayForm$" [defaultData]="defaultFormData$" [PrimaryButtonText]="'Guardar'" [SecondaryButtonText]="'Limpiar'" [TercearyButtonText]="'Salir'" [listName]="listName$" (formSubmit)="listenSubmit($event)"></app-dynamic-form>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Resultado</ng-template>
+        <div class="w-full h-full flex flex-col items-center justify-center py-12 bg-gradient-to-br from-cyan-400 via-teal-300 to-blue-300 shadow-xl rounded-2xl">
+          <div class="flex flex-col items-center justify-center space-y-4">
+
+            <h1 class="text-3xl font-extrabold bg-gradient-to-r bg-clip-text text-transparent"
+                [ngClass]="AADHAAR() ? 'text-cyan-700 from-blue-600 to-cyan-400' : 'text-red-700 from-red-600 to-orange-400'">
+              {{ AADHAAR() ? '¡Registro exitoso!' : '¡Registro fallido!' }}
+            </h1>
+            <p class="text-gray-700 text-center max-w-md">
+              @if(AADHAAR()) {
+                  Gracias por registrarte. Tu cuenta ha sido creada con éxito.<br>
+                  Ahora puedes iniciar sesión y comenzar a usar la plataforma.
+                  <div class="text-black">
+                    <mat-form-field appearance="outline" class="flex-grow" >
+                      <input matInput [(ngModel)]="AADHAAR" />
+                    </mat-form-field>
+
+                    <app-copy-clipboard
+                      [text]="AADHAAR()"
+                      buttonClass="hover:bg-green-100"
+                      icon="content_copy"
+                      successIcon="check_circle" />
+                  </div>
+
+              } @else {
+                  Lo sentimos, no pudimos completar tu registro.<br>
+                  Por favor verifica tus datos e inténtalo nuevamente.<br>
+                  Si el problema persiste, contacta al soporte.
+              }
+            </p>
+            <div class="mt-8 flex gap-2">
+              @if(!idFromUrl()){
+                <button mat-raised-button
+                [color]="AADHAAR() ? 'primary' : 'warn'"
+                class="px-8 py-2 text-lg font-semibold"
+                (click)="goConfirmData()">
+          Confirmar Registro
+              </button>
+              }
+
+              <button mat-flat-button
+                      [color]="AADHAAR() ? 'primary' : 'warn'"
+                      class="px-8 py-2 text-lg  font-semibold"
+                      (click)="goHome()">
+                {{ AADHAAR() ? 'Regresar' : 'Intentar de nuevo' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
 </app-primary-layout>

@@ -12,9 +12,9 @@
           <mat-icon matListIcon>home</mat-icon>
           <span>Inicio</span>
         </a>
-        <a mat-list-item routerLink="/Info">
-          <mat-icon matListIcon>info</mat-icon>
-          <span>Info</span>
+        <a mat-list-item routerLink="/personas/new-persona">
+          <mat-icon matListIcon>Info</mat-icon>
+          <span>Preregistro</span>
         </a>
       </mat-nav-list>
     </mat-sidenav>
@@ -38,16 +38,23 @@
               </button>
             }
 
-            <h1 class="text-xl font-semibold">Mi Aplicación</h1>
+            <h1 class="text-xl font-semibold">Registro AADHAAR</h1>
           </div>
           <div>
+            <button
+              type="button"
+              (click)="exit()"
+              class="hover:bg-gray-700 rounded-full p-2 transition-colors"
+            >
+              <mat-icon>logout</mat-icon>
+            </button>
             <!-- Puedes añadir un perfil o iconos aquí -->
           </div>
         </header>
       }
 
       <!-- Content -->
-      <main class="flex-1 p-4 md:p-6 overflow-auto">
+      <main class="flex-1 p-4 md:p-6 overflow-auto ">
         <ng-content select="[content]"></ng-content>
       </main>
 

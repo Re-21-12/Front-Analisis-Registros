@@ -1,4 +1,4 @@
-<div class="w-full p-6 mx-auto mt-8 lg:w-1/2 ">
+<div class="w-full p-6 mx-auto mt-8  ">
 
     <form (ngSubmit)="onSubmit()" [formGroup]="form" class="flex flex-col justify-center w-full">
 
@@ -8,7 +8,7 @@
 
 
 
-            @if(shouldShowLabel(field.Code)){
+            @if(shouldShowLabel(field.Code) && !field.Hidden){
 
 
 
@@ -40,15 +40,14 @@
             <!-- Campo alfanumérico -->
 
             @case ("text") {
-            <mat-form-field class="w-full ">
+            <mat-form-field class="w-full " [hidden]="field.Hidden" >
 
                 <input type="text" [title]="field.Name" [id]="field.Code" [formControlName]="field.Code"
-
                     [disabled]="field.Disabled" matInput class="text-gray-700 text-md focus:outline-none focus:ring-0"
 
                     [maxlength]="field.MaxLength ?? null" [minlength]="field.MinLength ?? null"
 
-                    [placeholder]="field.Placeholder ?? ''" />
+                    [placeholder]="field.Placeholder ?? ''"  />
 
 
 
@@ -70,7 +69,7 @@
 
             @case ("email") {
 
-            <mat-form-field class="w-full ">
+            <mat-form-field class="w-full " [hidden]="field.Hidden">
 
                 <input type="text" [title]="field.Name" [id]="field.Code" [formControlName]="field.Code"
 
@@ -78,7 +77,7 @@
 
                     [maxlength]="field.MaxLength ?? null" [minlength]="field.MinLength ?? null"
 
-                    [placeholder]="field.Placeholder ?? ''" />
+                    [placeholder]="field.Placeholder ?? ''"  />
 
 
 
@@ -118,7 +117,7 @@
 
 
 
-            <mat-form-field class="w-full ">
+            <mat-form-field class="w-full " [hidden]="field.Hidden">
 
                 <input type="text" [title]="field.Name" [id]="field.Code" [formControlName]="field.Code"
 
@@ -126,7 +125,7 @@
 
                     [maxlength]="field.MaxLength ?? null" [minlength]="field.MinLength ?? null" (keypress)="numberOnly($event)"
 
-                    [placeholder]="field.Placeholder ?? ''" />
+                    [placeholder]="field.Placeholder ?? ''"   />
 
                 @if(form.controls[field.Code].hasError('required') && form.controls[field.Code].touched){
 
@@ -154,7 +153,13 @@
 <!-- Image -->
             }
             @case ("image") {
-              <app-camera />
+              <!-- En tu dynamic-form.component.html -->
+              <app-camera
+              [field]="cameraField"
+              [form]="form"
+              (imageCaptured)="onImageCaptured($event)"
+            ></app-camera>
+
 
               }
 
@@ -165,7 +170,7 @@
 
             <mat-slide-toggle [formControlName]="field.Code" [disabled]="field.IsEditable"
 
-                [checked]="field.DefaultValue"></mat-slide-toggle>
+                [checked]="field.DefaultValue" [hidden]="field.Hidden" ></mat-slide-toggle>
 
             }
 
@@ -175,15 +180,17 @@
 
             @case ("date") {
 
-            <mat-form-field class="w-full ">
+            <mat-form-field class="w-full " [hidden]="field.Hidden">
 
                 <mat-hint class="text-sm font-normal text-gray-500">Selecciona la fecha</mat-hint>
 
                 <input matInput [title]="field.Name" [matDatepicker]="picker" [formControlName]="field.Code"
 
-                    [id]="field.Code" class="text-gray-700 text-md focus:outline-none focus:ring-0"
+                    [id]="field.Code" class="text-gray-700 text-md focus:outline-none 1focus:ring-0"
 
-                    [max]="maxDateValidation">
+                    [max]="maxDateValidation"
+
+                    [placeholder]="field.Placeholder ?? ''">
 
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
 
@@ -223,13 +230,13 @@
 
             @case ("number") {
 
-            <mat-form-field class="w-full ">
+            <mat-form-field class="w-full " [hidden]="field.Hidden">
 
                 <input matInput [title]="field.Name" type="number" [id]="field.Code" [formControlName]="field.Code"
 
                     class="text-gray-700 text-md focus:outline-none focus:ring-0" [min]="0" [max]="field.Max ?? null"
 
-                    [placeholder]="field.Placeholder ?? ''" (keypress)="numberOnly($event)" />
+                    [placeholder]="field.Placeholder ?? ''" (keypress)="numberOnly($event)"  />
 
                 @if (form.controls[field.Code].hasError('required') && form.controls[field.Code].touched) {
 
@@ -247,7 +254,7 @@
 
             @case ("decimal") {
 
-            <mat-form-field class="w-full ">
+            <mat-form-field class="w-full " [hidden]="field.Hidden">
 
 
 
@@ -261,7 +268,7 @@
 
                     [placeholder]="field.Placeholder ?? ''"
 
-                    (paste)="handlePasteDecimal($event.clipboardData?.getData('text/plain'))" decimalValidator />
+                    (paste)="handlePasteDecimal($event.clipboardData?.getData('text/plain'))" decimalValidator   />
 
 
 <!--
@@ -305,11 +312,11 @@
 
             @case ("textarea") {
 
-            <mat-form-field class="w-full ">
+            <mat-form-field class="w-full " [hidden]="field.Hidden">
 
                 <textarea matInput [formControlName]="field.Code" autocomplete="off" [title]="field.Name"
 
-                    class="text-gray-700 text-md focus:outline-none focus:ring-0"></textarea>
+                    class="text-gray-700 text-md focus:outline-none focus:ring-0"  ></textarea>
 
             </mat-form-field>
 
@@ -321,19 +328,19 @@
 
             @case ("select") {
 
-            <mat-form-field class="w-full ">
+            <mat-form-field class="w-full " [hidden]="field.Hidden">
 
                 <mat-hint class="text-sm font-normal text-gray-500">Selecciona una opción</mat-hint>
 
                 <mat-select [title]="field.Name" [formControlName]="field.Code" [id]="field.Code"
 
-                    [required]="field.IsRequired" [disabled]="!field.IsEditable">
+                    [required]="field.IsRequired" [disabled]="!field.IsEditable"  >
 
                     @for (opt of field.Options; track opt) {
 
                     <!-- Se sube el Value o el Key ? -->
 
-                    <mat-option [value]="opt.name">{{ opt.name }}</mat-option>
+                    <mat-option [value]="opt.id ?? opt.value">{{ opt.name }}</mat-option>
 
                     }
 
@@ -410,7 +417,7 @@
 
             <button type="submit"  mat-flat-button
 
-                color="primary" class="w-full font-semibold">{{PrimaryButtonText()}}</button>
+                color="primary" class="w-full font-semibold" [disabled]="form.invalid">{{PrimaryButtonText()}}</button>
           }
 
           @if(SecondaryButtonText()){
