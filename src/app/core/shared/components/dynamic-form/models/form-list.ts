@@ -28,6 +28,7 @@ export const Forms: TFormList = {
         Hidden: true,
         Disabled: false,
         TypeField: FieldType.Text,
+        DefaultValue: 'Pendiente',
       },
       {
         Id: 1,
@@ -136,8 +137,13 @@ export const Forms: TFormList = {
         IsEditable: true,
         Hidden: true,
         Disabled: false,
-        TypeField: FieldType.Text,
+        TypeField: FieldType.Select,
         DefaultValue: '2',
+        Options: [
+          { value: '1', name: 'Agente' },
+          { value: '2', name: 'Civil' },
+          { value: '3', name: 'Administrador' },
+        ]
       },
       {
         Id: 10,

@@ -11,6 +11,8 @@ import { Forms } from '../../shared/components/dynamic-form/models/form-list';
 import { Router } from '@angular/router';
 import { PersonaService } from '../../api/services/persona.service';
 import { PersonaResponse } from '../../shared/models/persona';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LocalStorageService } from '../../services/local-storage.service';
 
 @Component({
   selector: 'app-login',
@@ -32,7 +34,7 @@ export class LoginComponent implements OnInit {
   private _router = inject(Router);
   private _personService = inject(PersonaService);
   private _destroyRef = inject(DestroyRef);
-
+  private _localStorage = inject(LocalStorageService);
   form: FormTemplateModel = { ...Forms["login"] };
   displayForm$ = new BehaviorSubject<FormTemplateModel>(this.form);
 
@@ -48,10 +50,12 @@ export class LoginComponent implements OnInit {
         const formData = JSON.parse($event)
     const {id} = formData
 
-    this._personService.getById(id).subscribe({
+    this._personService.getById(id).pipe(takeUntilDestroyed(this._destroyRef)).subscribe({
       next: (response: PersonaResponse | null) => {
         if(!response) return
-        this._router.navigate(['/home']);
+        this._localStorage.setItem('tipoPersonaNombre', JSON.stringify(response.tipoPersonaNombre));
+        this._localStorage.setItem('id', JSON.stringify(response.id));
+        this._router.navigate(['/personas']);
       }
     });
   }

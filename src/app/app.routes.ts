@@ -46,7 +46,8 @@ export const routes: Routes = [
         loadComponent: () => import('./core/pages/register/register.component').then(m => m.RegisterComponent),
         data: {
           title: 'new persona',
-          status_create: 'Confirmado'
+          status_create: 'Pendiente'
+          
         }
       },
 

@@ -38,7 +38,7 @@
               }
             </p>
             <div class="mt-8 flex gap-2">
-              @if(!idFromUrl()){
+              @if(checkEstado() ){
                 <button mat-raised-button
                 [color]="AADHAAR() ? 'primary' : 'warn'"
                 class="px-8 py-2 text-lg font-semibold"

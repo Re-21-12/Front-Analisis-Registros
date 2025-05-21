@@ -5,14 +5,16 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, RouterModule } from '@angular/router';
+import { LocalStorageService } from '../../services/local-storage.service';
 @Component({
   selector: 'app-primary-layout',
-  imports: [ MatSidenavModule, MatButtonModule, MatListModule, MatIconModule, RouterModule, MatIconModule],
+  imports: [ MatSidenavModule, MatButtonModule, MatListModule, MatIconModule, RouterModule, MatIconModule, ],
   templateUrl: './primary-layout.component.html',
   styleUrl: './primary-layout.component.scss'
 })
 export class PrimaryLayoutComponent {
   private _router = inject(Router);
+  private _storage = inject(LocalStorageService);
  sidenav = viewChild<MatSidenav>("sidenav")
  // Trae inicialmente como falso
    showHeader = input<boolean>();
@@ -23,6 +25,7 @@ export class PrimaryLayoutComponent {
        year = new Date().getFullYear();
 
 exit = () => {
+  this._storage.removeItem('tipoPersonaNombre');
 this._router.navigate(['']);
 }
 }

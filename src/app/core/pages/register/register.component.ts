@@ -16,6 +16,7 @@ import { CopyClipboardComponent } from '../../shared/components/copy-clipboard/c
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LocalStorageService } from '../../services/local-storage.service';
 
 @Component({
   selector: 'app-register',
@@ -26,6 +27,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class RegisterComponent implements OnInit {
   ngOnInit(): void {
     this.confirmData()
+    this.getTipoPersona()
     this.configureForm()
     // Initialization logic here
   }
@@ -33,6 +35,7 @@ export class RegisterComponent implements OnInit {
   private _personService = inject(PersonaService);
   private _destroyRef$  = inject(DestroyRef);
   private _activatedRoute$ = inject(ActivatedRoute);
+  private _localStorage = inject(LocalStorageService);
 
   form: FormTemplateModel = {...Forms["persona"]};
   stateForm$ = new BehaviorSubject<DynamicFormStateOptions>({});
@@ -47,9 +50,18 @@ export class RegisterComponent implements OnInit {
   idTipoPersona: number = 2;
   status_create !: string
   idFromUrl = signal<string>("");
+  tipoPersonaNombre :string | undefined;
+  idPersona :string | undefined;
+  state = signal<string>("");
   configureForm = () => {
     this.displayForm$.next(this.form)
     this.listName$.next("regionId")
+  }
+  getTipoPersona = () => {
+    this.tipoPersonaNombre = this._localStorage.getItem('tipoPersonaNombre')?.toString().replace(/"/g, '').trim();
+    this.idPersona = this._localStorage.getItem('id')?.toString().replace(/"/g, '').trim();
+    console.log("tipoPersonaNombre",this.tipoPersonaNombre)
+
   }
 confirmData = () => {
   // 1. Primero esperas ambos: data y params
@@ -87,6 +99,20 @@ confirmData = () => {
 
         if (field.Name === "Tipo de Persona") {
           field.DefaultValue = this.idTipoPersona;
+          field.Hidden = this.tipoPersonaNombre === "Civil" ? true : false;
+              if (this.tipoPersonaNombre === "Administrador") {
+      field.Options = [
+        { name: "Agente", value:  "1" },
+        { name: "Civil" , value : "2"},
+        {  name: "Administrador", value: "3" }
+      ]
+    }
+    if (this.tipoPersonaNombre === "Agente") {
+      field.Options = [
+        {  name: "Agente", value:  "1" },
+        {  name: "Civil" , value : "2"},
+      ]
+    }
         }
       });
 
@@ -96,6 +122,7 @@ confirmData = () => {
 
         this._personService.getById(this.idFromUrl()).subscribe((data: PersonaResponse | null) => {
           console.log('data:', data);
+          data?.estado === "Confirmado" ? this.stateForm$.next({invalid: true, disabled: true}): undefined
           this.defaultFormData$.next(data);
         });
       }
@@ -113,10 +140,17 @@ goHome = () =>{
         this._router.navigate([''])
 
 }
+checkEstado = () =>{
+  return this.state() === "Confirmado" ? false : true
+}
   listenSubmit = ($event : string) =>{
     // ! El valor se cambia aca por que hay que intervenir antes de mandar al backend
     const persona: PersonaRequest = JSON.parse($event)
-    const newPersona : PersonaRequest = {...persona, estado:this.status_create}
+    const estado = persona.tipoPersonaId == 2 ? "Pendiente" : "Confirmado"
+    this.state.set(estado)
+    console.log('estado:', estado);
+    const newPersona : PersonaRequest = {...persona, estado: estado}
+
     console.log('persona:', persona);
     if(this.idFromUrl()){
       this._personService.update(this.idFromUrl(), newPersona).pipe(takeUntilDestroyed(this._destroyRef$)).subscribe({
@@ -130,7 +164,7 @@ goHome = () =>{
         }
       })
     }else{
-    this._personService.create(persona).pipe(takeUntilDestroyed(this._destroyRef$)).subscribe({
+    this._personService.create(newPersona).pipe(takeUntilDestroyed(this._destroyRef$)).subscribe({
       next: (data:PersonaRequest) => {
        if  (!data) return
         console.log('Persona created successfully:', data);
