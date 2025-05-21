@@ -5,9 +5,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "prebuild": "ng build --configuration development",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "tunnel dev" : "ng serve --host 0.0.0.0 --disable-host-check"
+    "tunnel dev": "ng serve --host 0.0.0.0 --disable-host-check ngrock http 4200"
   },
   "private": true,
   "dependencies": {
