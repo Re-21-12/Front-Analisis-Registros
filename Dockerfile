@@ -11,7 +11,6 @@ COPY . .
 
 # Construir la aplicación Angular
 RUN npm run build-dev
-
 # Etapa 2: Servir la aplicación
 FROM nginx:1.25
 
@@ -19,7 +18,7 @@ FROM nginx:1.25
 COPY --from=build /app/dist/vuelos-front /usr/share/nginx/html
 
 # Exponer el puerto 80
-EXPOSE 4200
+EXPOSE 80
 
 # Comando por defecto
 CMD ["nginx", "-g", "daemon off;"]
