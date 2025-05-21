@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "prebuild": "ng build --configuration development",
+    "build-prod": "ng build --configuration production",
+    "build-dev": "ng build --configuration development",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "tunnel dev": "ng serve --host 0.0.0.0 --disable-host-check ngrock http 4200"

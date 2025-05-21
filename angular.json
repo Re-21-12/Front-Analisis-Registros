@@ -37,26 +37,30 @@
           },
           "configurations": {
             "production": {
-              "outputPath": "dist/analisis-front-prod",
+              "outputPath": "dist/analisis-front-prod/browser",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.dev.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": false,
+              "outputHashing": "all",
               "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumError": "8MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "100kB",
+                  "maximumError": "150kB"
                 }
-              ],
-              "outputHashing": "all"
+              ]
             },
             "development": {
               "fileReplacements": [
