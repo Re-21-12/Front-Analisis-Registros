@@ -1,12 +1,12 @@
 import { PrimaryLayoutComponent } from './../../layouts/primary-layout/primary-layout.component';
-import { DynamicFormComponent } from './../../shared/components/dynamic-form/dynamic-form.component';
+import { DynamicFormComponent, DynamicFormStateOptions } from './../../shared/components/dynamic-form/dynamic-form.component';
 import { Component, DestroyRef, inject, model, OnInit, signal, viewChild } from '@angular/core';
 import { PersonaService } from '../../api/services/persona.service';
 import { FormTemplateModel } from '../../shared/components/dynamic-form/models/form-template';
 import { Forms } from '../../shared/components/dynamic-form/models/form-list';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PersonaRequest, PersonaResponse } from '../../shared/models/persona';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { CopyClipboardComponent } from '../../shared/components/copy-clipboard/copy-clipboard.component';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-register',
@@ -24,8 +25,8 @@ import { MatInputModule } from '@angular/material/input';
 })
 export class RegisterComponent implements OnInit {
   ngOnInit(): void {
-    this.configureForm()
     this.confirmData()
+    this.configureForm()
     // Initialization logic here
   }
   private _router = inject(Router);
@@ -34,6 +35,7 @@ export class RegisterComponent implements OnInit {
   private _activatedRoute$ = inject(ActivatedRoute);
 
   form: FormTemplateModel = {...Forms["persona"]};
+  stateForm$ = new BehaviorSubject<DynamicFormStateOptions>({});
   displayForm$ = new BehaviorSubject<FormTemplateModel>({} as FormTemplateModel);
   defaultFormData$ = new BehaviorSubject<any>({});
   listName$ = new BehaviorSubject<string>("");
@@ -41,34 +43,69 @@ export class RegisterComponent implements OnInit {
   AADHAAR = model<string>("");
   stepper = viewChild<MatStepper>('stepper');
   titleForm = signal<string>("Registrar Datos");
+  //Esto va a depender de con que cuenta se loguee la persona
+  idTipoPersona: number = 2;
+  status_create !: string
   idFromUrl = signal<string>("");
   configureForm = () => {
     this.displayForm$.next(this.form)
     this.listName$.next("regionId")
   }
-  confirmData = () =>{
+confirmData = () => {
+  // 1. Primero esperas ambos: data y params
+  this._activatedRoute$.data.pipe(takeUntilDestroyed(this._destroyRef$)).subscribe((data) => {
+    if (data['type']) {
+      this.idTipoPersona = data['type']['agent'] || data['type']['admin'] || 2;
+      this.titleForm.set(
+        `${this.idTipoPersona === 1 ? 'Registrar Agente' :
+          this.idTipoPersona === 3 ? 'Registrar Administrador' :
+            'Registrar Persona'}`
+      );
+    }
 
-    this.form.Fields.forEach((field) => {
-      if(field.Name === "Estado")
-        field.DefaultValue = "Confirmado"
-      if(field.Name === "AADHAAR"){
-        field.Hidden = this.idFromUrl() ? false : true
-        field.DefaultValue = this.idFromUrl()
-        field.Disabled = true
-      }
+    if (data['status_create']) {
+      this.status_create = data['status_create']
+      console.log('status_create:', this.status_create);
+      this.status_create == "Confirmado" ? this.stateForm$.next({invalid: true, disabled: true}): undefined;
+    }
 
-    })
+    this._activatedRoute$.params.pipe(takeUntilDestroyed(this._destroyRef$)).subscribe((params) => {
+      this.idFromUrl.set(params['id']);
 
-    this._activatedRoute$.params.subscribe((params) => {
-      this.idFromUrl.set (params['id'])
-      if (!this.idFromUrl()) return
-      this.titleForm.set("Confirmar Datos")
+      // Ahora que tienes status_create e idFromUrl, modificas los campos
+      this.form.Fields.forEach((field) => {
+        if (field.Name === "Estado") {
+          field.Hidden = this.status_create === "Confirmado" ? false : true;
+          field.Disabled = true;
+        }
+
+        if (field.Name === "AADHAAR") {
+          field.Hidden = this.idFromUrl() ? false : true;
+          field.DefaultValue = this.idFromUrl();
+          field.Disabled = true;
+        }
+
+        if (field.Name === "Tipo de Persona") {
+          field.DefaultValue = this.idTipoPersona;
+        }
+      });
+
+      // Si viene con ID => modo edición
+      if (this.idFromUrl()) {
+        this.titleForm.set("Confirmar Datos");
+
         this._personService.getById(this.idFromUrl()).subscribe((data: PersonaResponse | null) => {
-          this.defaultFormData$.next(data)
-        })
+          console.log('data:', data);
+          this.defaultFormData$.next(data);
+        });
+      }
+    });
+  });
 
-    })
-  }
+  this.displayForm$.next(this.form);
+  this.listName$.next("regionId");
+}
+
   goConfirmData = ()=>{
     this._router.navigate(['personas/new-persona', this.AADHAAR()])
   }
@@ -77,9 +114,12 @@ goHome = () =>{
 
 }
   listenSubmit = ($event : string) =>{
+    // ! El valor se cambia aca por que hay que intervenir antes de mandar al backend
     const persona: PersonaRequest = JSON.parse($event)
+    const newPersona : PersonaRequest = {...persona, estado:this.status_create}
+    console.log('persona:', persona);
     if(this.idFromUrl()){
-      this._personService.update(this.idFromUrl(), persona).subscribe({
+      this._personService.update(this.idFromUrl(), newPersona).pipe(takeUntilDestroyed(this._destroyRef$)).subscribe({
         next: (data:boolean) => {
           if  (!data) return
         this.AADHAAR.set(this.idFromUrl())
@@ -90,7 +130,7 @@ goHome = () =>{
         }
       })
     }else{
-    this._personService.create(persona).subscribe({
+    this._personService.create(persona).pipe(takeUntilDestroyed(this._destroyRef$)).subscribe({
       next: (data:PersonaRequest) => {
        if  (!data) return
         console.log('Persona created successfully:', data);

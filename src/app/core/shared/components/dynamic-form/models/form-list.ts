@@ -19,6 +19,16 @@ export const Forms: TFormList = {
         Disabled: true,
         TypeField: FieldType.Text,
       },
+            {
+        Id: 12,
+        Code: 'estado',
+        Name: 'Estado',
+        IsRequired: true,
+        IsEditable: true,
+        Hidden: true,
+        Disabled: false,
+        TypeField: FieldType.Text,
+      },
       {
         Id: 1,
         Code: 'primerNombre',
@@ -153,17 +163,7 @@ export const Forms: TFormList = {
         Disabled: false,
         TypeField: FieldType.Image,
       },
-      {
-        Id: 12,
-        Code: 'estado',
-        Name: 'Estado',
-        IsRequired: true,
-        IsEditable: true,
-        Hidden: true,
-        Disabled: false,
-        TypeField: FieldType.Text,
-        DefaultValue: 'Pendiente',
-      }
+
     ]
   },
   region: {

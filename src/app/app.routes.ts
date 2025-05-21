@@ -6,13 +6,7 @@ export const routes: Routes = [
     redirectTo: 'login',
     pathMatch: 'full'
   },
-  {
-    path: 'home',
-    loadComponent: () => import('./core/pages/home/home.component').then(m => m.HomeComponent),
-    data: {
-      title: 'home'
-    }
-  },
+
   {
     path: 'login',
     loadComponent: () => import('./core/pages/login/login.component').then(m => m.LoginComponent),
@@ -23,27 +17,39 @@ export const routes: Routes = [
   {
     path: 'personas',
     children: [
+        {
+    path: '',
+    loadComponent: () => import('./core/pages/home/home.component').then(m => m.HomeComponent),
+    data: {
+      title: 'personas'
+    }
+  },
+      /* Preregistro */
       {
-        path: 'new-persona',
+        path: 'new-persona-by-user',
         loadComponent: () => import('./core/pages/register/register.component').then(m => m.RegisterComponent),
         data: {
-          title: 'new persona'
+          title: 'new persona',
+          status_create: 'Pendiente'
         }
       },
-      {
-        path: 'new-persona/:id',
+            {
+        path: 'new-persona-by-user/:id',
         loadComponent: () => import('./core/pages/register/register.component').then(m => m.RegisterComponent),
         data: {
-          title: 'edit persona'
+          title: 'new persona',
+          status_create: 'Confirmado'
         }
       },
-      {
-        path: 'new-persona/:id/detail',
+            {
+        path: 'new-persona-by-other',
         loadComponent: () => import('./core/pages/register/register.component').then(m => m.RegisterComponent),
         data: {
-          title: 'detail persona'
+          title: 'new persona',
+          status_create: 'Confirmado'
         }
-      }
+      },
+
     ]
   }
 ];

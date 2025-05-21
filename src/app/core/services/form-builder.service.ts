@@ -21,7 +21,7 @@ export class FormBuilderService {
         });
       }
 
-      group[field.Code] = new FormControl({value: '',disabled: field.Disabled }, [...validators]);
+      group[field.Code] = new FormControl({value: field.DefaultValue||'' ,disabled: field.Disabled }, [...validators]);
     });
 
     return new FormGroup(group);

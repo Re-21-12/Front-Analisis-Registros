@@ -43,6 +43,12 @@ import { CameraComponent } from '../camera/camera.component';
 import { Router } from '@angular/router';
 import { ChangeListSelectService } from '../../../services/change-list-select.service';
 
+export interface DynamicFormStateOptions {
+  disabled?: boolean;
+  enabled?: boolean;
+  reset?: boolean;
+  invalid?: boolean;
+}
 
 const MATERIAL_IMPORT = [
 
@@ -94,6 +100,7 @@ const MATERIAL_IMPORT = [
 
 })
 
+
 export class DynamicFormComponent implements OnInit {
 
   private _destroyRef$ = inject(DestroyRef)
@@ -104,7 +111,7 @@ export class DynamicFormComponent implements OnInit {
   @Input() inputForm : Observable<FormTemplateModel> | undefined
   @Input() defaultData : Observable<any> | undefined
   @Input() listName : Observable<string> | undefined
-  @Input() stateForm : Observable<string> | undefined
+  @Input() stateForm : Observable<DynamicFormStateOptions> | undefined
 @ViewChild(CameraComponent) cameraComponent!: CameraComponent;
 
   formData = signal<FormTemplateModel>({} as FormTemplateModel)
@@ -116,7 +123,7 @@ export class DynamicFormComponent implements OnInit {
   cameraField: any;
   form: FormGroup = new FormGroup({});
   maxDateValidation: DateTime = DateTime.now()
-
+  disabledButton = signal<boolean>(false)
 
 
 
@@ -156,14 +163,20 @@ export class DynamicFormComponent implements OnInit {
     this.stateForm?.pipe(
       takeUntilDestroyed(this._destroyRef$)
     ).subscribe({
-      next: (state: string) => {
-        if (state === 'disabled') {
+      next: (state: DynamicFormStateOptions) => {
+        console.log('stateForm', state)
+        if (state.disabled) {
           this.form.disable()
         }
-        if (state === 'enabled') {
+        if (state.enabled) {
           this.form.enable()
         }
-
+        if(state.reset) {
+          this.form.reset()
+        }
+        if(state.invalid) {
+            this.disabledButton.set(true)
+        }
       }
     })
 

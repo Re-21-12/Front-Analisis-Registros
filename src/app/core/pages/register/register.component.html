@@ -4,7 +4,7 @@
       <mat-step>
         <ng-template matStepLabel>Registro</ng-template>
          <h1 class="text-center text-4xl">{{titleForm()}}</h1>
-        <app-dynamic-form [inputForm]="displayForm$" [defaultData]="defaultFormData$" [PrimaryButtonText]="'Guardar'" [SecondaryButtonText]="'Limpiar'" [TercearyButtonText]="'Salir'" [listName]="listName$" (formSubmit)="listenSubmit($event)"></app-dynamic-form>
+        <app-dynamic-form [inputForm]="displayForm$" [defaultData]="defaultFormData$" [PrimaryButtonText]="'Guardar'" [SecondaryButtonText]="'Limpiar'" [TercearyButtonText]="'Salir'" [listName]="listName$" (formSubmit)="listenSubmit($event)" [stateForm]="stateForm$"></app-dynamic-form>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>Resultado</ng-template>

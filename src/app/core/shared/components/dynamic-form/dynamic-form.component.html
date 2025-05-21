@@ -417,14 +417,14 @@
 
             <button type="submit"  mat-flat-button
 
-                color="primary" class="w-full font-semibold" [disabled]="form.invalid">{{PrimaryButtonText()}}</button>
+                color="primary" class="w-full font-semibold" [disabled]="form.invalid || disabledButton()">{{PrimaryButtonText()}}</button>
           }
 
           @if(SecondaryButtonText()){
                         <button  type="button"
             (click)="cleanForm()"
             color="secondary"
-                class="flex items-center justify-center w-full gap-2 pr-2 font-semibold text-blue-800" type="button" mat-stroked-button>
+                class="flex items-center justify-center w-full gap-2 pr-2 font-semibold text-blue-800" type="button" mat-stroked-button [disabled]="form.invalid || disabledButton()">
                 {{SecondaryButtonText()}} </button>
           }
           @if(TercearyButtonText()){

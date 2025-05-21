@@ -6,6 +6,7 @@ import { DynamicTableComponent } from "../../shared/components/dynamic-table/dyn
 import { PersonaService } from '../../api/services/persona.service';
 import { PersonaResponse } from '../../shared/models/persona';
 import { DynamicCardComponent } from '../../shared/components/dynamic-card/dynamic-card.component';
+import { ActivatedRoute } from '@angular/router';
 
 interface ChildData {
   title: string;
@@ -20,8 +21,10 @@ interface ChildData {
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit{
- private personService = inject(PersonaService)
-  data:ChildData[] = []
+ private _personService = inject(PersonaService)
+  private _activatedRoute$ = inject(ActivatedRoute);
+
+ data:ChildData[] = []
 
 ngOnInit(): void {
 this.getPersonalData()
@@ -29,7 +32,7 @@ this.getPersonalData()
 
 
 getPersonalData = () => {
-  this.personService.getAll().subscribe((data: PersonaResponse[]) => {
+  this._personService.getAll().subscribe((data: PersonaResponse[]) => {
     this.data = data.map(p => ({
       title: `${p.id}`.trim(),
       description: `${p.primerNombre}${p.primerApellido}`.trim(),
