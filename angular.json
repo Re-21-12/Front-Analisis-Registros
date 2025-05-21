@@ -37,7 +37,7 @@
           },
           "configurations": {
             "production": {
-              "outputPath": "dist/vuelos-front/browser",
+              "outputPath": "dist/vuelos-front",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.dev.ts",
@@ -69,7 +69,7 @@
                   "with": "src/environments/environment.dev.ts"
                 }
               ],
-              "outputPath": "dist/vuelos-front/browser",
+              "outputPath": "dist/vuelos-front",
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
