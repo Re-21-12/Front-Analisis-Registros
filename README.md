@@ -1,5 +1,16 @@
 # VuelosFront
 
+```
+Deploy docker
+
+construir imagen
+docker build -t vuelos-front:latest .
+etiquetar imagen
+docker tag vuelos-front:latest revic2112/dev-analisis-front:latest
+pushear al repo
+docker push revic2112/dev-analisis-front:latest
+```
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.10.
 
 ## Development server
@@ -57,5 +68,7 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
 # front-Bd-distirbuidas
+
 # Front-Analisis-Registros
