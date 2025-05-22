@@ -144,11 +144,12 @@ export class RegisterComponent implements OnInit {
               }
 
               if (field.Name === "Tipo de Persona") {
+                console.log("Agente 1", this.tipoPersonaNombre);
                 field.DefaultValue = this.idTipoPersona;
                 field.Hidden =
-                  this.tipoPersonaNombre === "Civil" ? true : false;
-                console.log("Agente 1", this.tipoPersonaNombre);
-                console.log("Agente 1");
+                  this.tipoPersonaNombre === undefined ? true : false;
+                if (this.tipoPersonaNombre === "Civil") {
+                }
                 if (this.tipoPersonaNombre === "Agente") {
                   console.log("Agente 2");
                   this.dynamicOptions[field.Code] = [
