@@ -96,6 +96,7 @@
                 }
               ],
               "outputPath": "dist/vuelos-front",
+
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,

@@ -4,10 +4,15 @@
 Deploy docker
 
 construir imagen
-docker build -t vuelos-front:latest .
+docker build --no-cache -t vuelos-front:latest .
 etiquetar imagen
 docker tag vuelos-front:latest revic2112/dev-analisis-front:latest
 pushear al repo
+docker push revic2112/dev-analisis-front:latest
+
+docker image prune -a
+docker build --no-cache -t vuelos-front:latest .
+docker tag vuelos-front:latest revic2112/dev-analisis-front:latest
 docker push revic2112/dev-analisis-front:latest
 ```
 

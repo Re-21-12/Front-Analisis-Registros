@@ -13,6 +13,8 @@ import {
 } from "@angular/material-luxon-adapter";
 import { environment } from "./environments/environment.dev";
 
+console.log("Environment:", environment);
+
 if (environment.production) {
   window.console.log = () => {};
   window.console.warn = () => {};
