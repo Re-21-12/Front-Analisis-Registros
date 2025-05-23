@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Construir la aplicación Angular
-RUN npm run build-dev
+RUN npm run build-prod
 
 # Etapa 2: Servir la aplicación
 FROM nginx:1.25

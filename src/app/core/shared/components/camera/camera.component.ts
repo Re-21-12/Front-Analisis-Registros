@@ -1,14 +1,23 @@
-import { AfterViewInit, Component, ViewChild, ElementRef, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { HttpClient } from '@angular/common/http';
-import { NgClass } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  ViewChild,
+  ElementRef,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy,
+} from "@angular/core";
+import { MatButtonModule } from "@angular/material/button";
+import { HttpClient } from "@angular/common/http";
+import { NgClass } from "@angular/common";
 
 @Component({
-  selector: 'app-camera',
+  selector: "app-camera",
   standalone: true,
-  templateUrl: './camera.component.html',
-  styleUrls: ['./camera.component.scss'],
-  imports: [MatButtonModule, NgClass]
+  templateUrl: "./camera.component.html",
+  styleUrls: ["./camera.component.scss"],
+  imports: [MatButtonModule, NgClass],
 })
 export class CameraComponent implements AfterViewInit, OnDestroy {
   @Input() field: any;
@@ -21,8 +30,9 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
   cameraVisible = true;
   stream: MediaStream | null = null;
 
-  @ViewChild('video', { static: false }) video?: ElementRef<HTMLVideoElement>;
-  @ViewChild('canvas', { static: false }) canvas?: ElementRef<HTMLCanvasElement>;
+  @ViewChild("video", { static: false }) video?: ElementRef<HTMLVideoElement>;
+  @ViewChild("canvas", { static: false })
+  canvas?: ElementRef<HTMLCanvasElement>;
 
   captures: string[] = [];
   error: any = null;
@@ -33,10 +43,12 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
 
   async ngAfterViewInit() {
     try {
-      const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
-      tempStream.getTracks().forEach(track => track.stop());
+      const tempStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+      tempStream.getTracks().forEach((track) => track.stop());
     } catch (err) {
-      console.warn('Camera access check failed:', err);
+      console.warn("Camera access check failed:", err);
     }
   }
 
@@ -66,8 +78,8 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
   }
 
   private handleCameraError(err: any) {
-    console.error('Camera error:', err);
-    this.error = err.message || 'No se pudo acceder a la cámara';
+    console.error("Camera error:", err);
+    this.error = err.message || "No se pudo acceder a la cámara";
     this.cameraActive = false;
   }
 
@@ -77,7 +89,7 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
 
   stopCamera() {
     if (this.stream) {
-      this.stream.getTracks().forEach(track => track.stop());
+      this.stream.getTracks().forEach((track) => track.stop());
       this.stream = null;
     }
     if (this.video?.nativeElement) {
@@ -87,18 +99,28 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
 
   async setupDevices() {
     if (!navigator.mediaDevices?.getUserMedia) {
-      this.error = 'Camera API not supported in this browser';
+      this.error = "Camera API not supported in this browser";
       return;
     }
 
     try {
       this.stopCamera();
+
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const videoConstraints = isMobile
+        ? {
+            width: { ideal: 320 }, // Resolución más pequeña para móviles
+            height: { ideal: 240 },
+            facingMode: "user", // Cámara frontal en móviles
+          }
+        : {
+            width: { ideal: this.WIDTH }, // Resolución original para PC
+            height: { ideal: this.HEIGHT },
+            facingMode: "environment", // Cámara trasera en PC
+          };
+
       this.stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: this.WIDTH },
-          height: { ideal: this.HEIGHT },
-          facingMode: 'environment'
-        }
+        video: videoConstraints,
       });
 
       if (this.video?.nativeElement) {
@@ -115,7 +137,7 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
     if (!this.video?.nativeElement || !this.canvas?.nativeElement) return;
 
     this.drawImageToCanvas(this.video.nativeElement);
-    const base64Image = this.canvas.nativeElement.toDataURL('image/jpeg', 0.8);
+    const base64Image = this.canvas.nativeElement.toDataURL("image/jpeg", 0.8);
     this.currentBase64Image = base64Image;
     this.imageCaptured.emit(base64Image);
 
@@ -156,14 +178,14 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
   }
 
   drawImageToCanvas(image: HTMLImageElement | HTMLVideoElement) {
-    const context = this.canvas?.nativeElement?.getContext('2d');
+    const context = this.canvas?.nativeElement?.getContext("2d");
     if (!context || !this.canvas?.nativeElement) return;
     context.drawImage(image, 0, 0, this.WIDTH, this.HEIGHT);
   }
 
   getPureBase64(): string | null {
     if (!this.currentBase64Image) return null;
-    return this.currentBase64Image.split(',')[1];
+    return this.currentBase64Image.split(",")[1];
   }
 
   getImageBlob(): Promise<Blob | null> {
@@ -174,8 +196,8 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
       }
 
       fetch(this.currentBase64Image)
-        .then(res => res.blob())
-        .then(blob => resolve(blob))
+        .then((res) => res.blob())
+        .then((blob) => resolve(blob))
         .catch(() => resolve(null));
     });
   }
