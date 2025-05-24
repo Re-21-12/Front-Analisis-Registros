@@ -1,24 +1,12 @@
-
-FROM node:18 AS build
-
-
+FROM node:lts-slim as build
 WORKDIR /app
+RUN npm install -g @angular/cli
+COPY . ./
+RUN npm ci
+RUN ng build --configuration=production --output-path=/app/dist
 
-# Copiar archivos necesarios
-COPY package.json package-lock.json ./
-RUN npm install
-
-
-COPY . .
-
-# Construir la aplicación Angular
-RUN npm run build-prod
-
-# Etapa 2: Servir la aplicación
-FROM nginx:1.25
-
-# Copiar los archivos construidos al servidor Nginx
-COPY --from=build /app/dist/vuelos-front /usr/share/nginx/html
-
-# Exponer el puerto 80
-EXPOSE 80
+# Etapa final solo para copiar archivos (sin Nginx)
+FROM alpine:latest as final
+WORKDIR /app
+COPY --from=build /app/dist /app/dist
+CMD ["sh", "-c", "echo 'Build completado. Los archivos están en /app/dist'"]

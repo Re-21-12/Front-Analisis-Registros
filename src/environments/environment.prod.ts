@@ -1,4 +1,4 @@
 export const environment = {
-  apiUrl: "https://proy-analisis-re2112.duckdns.org/api/",
+  apiUrl: "https://backend-analisis-registros.onrender.com/api/",
   production: true,
 };
