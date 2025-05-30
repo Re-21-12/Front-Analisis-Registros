@@ -39,7 +39,38 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
   isCaptured = false;
   currentBase64Image: string | null = null;
 
-  constructor(private http: HttpClient) {}
+  isDesktop = window.innerWidth >= 768; // 768px es el breakpoint md de Tailwind
+
+  // Dimensiones fijas para mantener formato consistente
+  FIXED_WIDTH = 400;
+  FIXED_HEIGHT = 300;
+
+  // Propiedades dinámicas para dimensiones
+  currentWidth = 400;
+  currentHeight = 300;
+
+  constructor(private http: HttpClient) {
+    // Escuchar cambios de tamaño de ventana y orientación
+    const handleResize = () => {
+      this.isDesktop = window.innerWidth >= 768;
+      // Mantener dimensiones fijas independientemente del dispositivo
+      this.updateFixedDimensions();
+    };
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+  }
+
+  private updateFixedDimensions() {
+    // Ajustar solo para pantallas muy pequeñas
+    if (window.innerWidth < 480) {
+      this.currentWidth = Math.min(320, window.innerWidth - 40);
+      this.currentHeight = (this.currentWidth * 3) / 4; // Mantener ratio 4:3
+    } else {
+      this.currentWidth = this.FIXED_WIDTH;
+      this.currentHeight = this.FIXED_HEIGHT;
+    }
+  }
 
   async ngAfterViewInit() {
     try {
@@ -105,19 +136,15 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
 
     try {
       this.stopCamera();
+      this.updateFixedDimensions();
 
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      const videoConstraints = isMobile
-        ? {
-            width: { ideal: 320 }, // Resolución más pequeña para móviles
-            height: { ideal: 240 },
-            facingMode: "user", // Cámara frontal en móviles
-          }
-        : {
-            width: { ideal: this.WIDTH }, // Resolución original para PC
-            height: { ideal: this.HEIGHT },
-            facingMode: "environment", // Cámara trasera en PC
-          };
+
+      const videoConstraints = {
+        width: { ideal: 640, max: 1280 },
+        height: { ideal: 480, max: 960 },
+        facingMode: isMobile ? "user" : "environment",
+      };
 
       this.stream = await navigator.mediaDevices.getUserMedia({
         video: videoConstraints,
@@ -126,6 +153,13 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
       if (this.video?.nativeElement) {
         this.video.nativeElement.srcObject = this.stream;
         await this.video.nativeElement.play();
+
+        // Configurar canvas con dimensiones fijas
+        if (this.canvas?.nativeElement) {
+          this.canvas.nativeElement.width = this.currentWidth;
+          this.canvas.nativeElement.height = this.currentHeight;
+        }
+
         this.error = null;
       }
     } catch (err) {
@@ -180,7 +214,46 @@ export class CameraComponent implements AfterViewInit, OnDestroy {
   drawImageToCanvas(image: HTMLImageElement | HTMLVideoElement) {
     const context = this.canvas?.nativeElement?.getContext("2d");
     if (!context || !this.canvas?.nativeElement) return;
-    context.drawImage(image, 0, 0, this.WIDTH, this.HEIGHT);
+
+    // Limpiar canvas
+    context.clearRect(0, 0, this.currentWidth, this.currentHeight);
+
+    if (image instanceof HTMLVideoElement) {
+      // Para video, mantener las dimensiones fijas y centrar el contenido
+      const videoWidth = image.videoWidth;
+      const videoHeight = image.videoHeight;
+
+      // Calcular scaling para fit dentro del canvas manteniendo aspect ratio
+      const scaleX = this.currentWidth / videoWidth;
+      const scaleY = this.currentHeight / videoHeight;
+      const scale = Math.min(scaleX, scaleY);
+
+      const scaledWidth = videoWidth * scale;
+      const scaledHeight = videoHeight * scale;
+
+      // Centrar la imagen
+      const offsetX = (this.currentWidth - scaledWidth) / 2;
+      const offsetY = (this.currentHeight - scaledHeight) / 2;
+
+      // Rellenar fondo negro si hay espacio
+      context.fillStyle = "#000000";
+      context.fillRect(0, 0, this.currentWidth, this.currentHeight);
+
+      context.drawImage(
+        image,
+        0,
+        0,
+        videoWidth,
+        videoHeight,
+        offsetX,
+        offsetY,
+        scaledWidth,
+        scaledHeight,
+      );
+    } else {
+      // Para imágenes, usar dimensiones fijas
+      context.drawImage(image, 0, 0, this.currentWidth, this.currentHeight);
+    }
   }
 
   getPureBase64(): string | null {

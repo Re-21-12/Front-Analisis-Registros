@@ -1,0 +1,90 @@
+// Contenedor principal de la cámara
+.camera-frame {
+  position: relative;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  // Asegurar que el video y canvas estén perfectamente centrados
+  video,
+  canvas {
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+}
+
+// Centrado perfecto para todos los elementos
+.camera-container {
+  position: relative;
+  margin: 0 auto;
+  display: block;
+
+  video,
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+}
+
+// Asegurar centrado en móviles
+@media (max-width: 768px) {
+  .camera-frame {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .camera-container {
+    margin: 0 auto;
+  }
+}
+
+// Para dispositivos muy pequeños
+@media (max-width: 480px) {
+  .camera-frame {
+    padding: 0 10px;
+  }
+
+  .camera-container {
+    margin: 0 auto;
+  }
+}
+
+// Overlay centrado
+.camera-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Botones centrados
+.camera-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+// Galería centrada
+.gallery-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
