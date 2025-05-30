@@ -68,6 +68,7 @@ export interface DynamicFormStateOptions {
   enabled?: boolean;
   reset?: boolean;
   invalid?: boolean;
+  submit?: boolean;
 }
 
 const MATERIAL_IMPORT = [
@@ -159,7 +160,6 @@ export class DynamicFormComponent implements OnInit {
 
     this.defaultData?.pipe(takeUntilDestroyed(this._destroyRef$)).subscribe({
       next: (data: any) => {
-        console.log("defaultData", data);
         this.form.patchValue(data);
       },
     });
@@ -171,7 +171,6 @@ export class DynamicFormComponent implements OnInit {
     });
     this.stateForm?.pipe(takeUntilDestroyed(this._destroyRef$)).subscribe({
       next: (state: DynamicFormStateOptions) => {
-        console.log("stateForm", state);
         if (state.disabled) {
           this.form.disable();
         }
@@ -184,11 +183,13 @@ export class DynamicFormComponent implements OnInit {
         if (state.invalid) {
           this.disabledButton.set(true);
         }
+        if (state.submit) {
+          this.onSubmit();
+        }
       },
     });
     this.dynamicOptions?.pipe(takeUntilDestroyed(this._destroyRef$)).subscribe({
       next: (data: SelectTemplateModel) => {
-        console.log("dynamicOptions", data);
         Object.keys(data).forEach((fieldCode) => {
           const field = this.formData().Fields.find(
             (f) => f.Code === fieldCode,
@@ -219,7 +220,6 @@ export class DynamicFormComponent implements OnInit {
       .pipe(takeUntilDestroyed(this._destroyRef$))
       .subscribe({
         next: (data: any) => {
-          console.log("llego");
           const mappedData = data.map((dato: any) => {
             const [key, value] = Object.values(dato);
             return { id: key, name: value };
@@ -235,7 +235,6 @@ export class DynamicFormComponent implements OnInit {
   };
 
   configureForm = () => {
-    console.log(this.formData().Fields);
     this.form = this._fieldControlService.toFormGroup(
       this.formData().Fields,
       this.formData(),
@@ -262,7 +261,6 @@ export class DynamicFormComponent implements OnInit {
 
   disabledFields = () => {
     this.formData().Fields.forEach((field) => {
-      console.log(field.Disabled);
       if (field.Disabled) {
         this.form.get(field.Code)?.disable();
       }

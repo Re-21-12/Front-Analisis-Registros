@@ -1,29 +1,66 @@
 <div
-  class="min-h-screen flex items-center justify-center bg-black py-12 px-4 sm:px-6 lg:px-8"
+  class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
 >
-  <div class="max-w-md w-full space-y-8">
-    <div>
-      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-100">
-        Bienvenido
-      </h2>
+  <!-- Partículas de fondo animadas -->
+  <div class="absolute inset-0 overflow-hidden">
+    <div class="particles">
+      @for (particle of particles; track $index) {
+        <div
+          class="particle"
+          [style.left.%]="particle.x"
+          [style.animation-delay.s]="particle.delay"
+        ></div>
+      }
+    </div>
+  </div>
+
+  <div class="max-w-md w-full space-y-8 relative z-10">
+    <!-- Título con animación de letras -->
+    <div class="text-center">
+      <div class="animated-title">
+        <span
+          *ngFor="let letter of titleLetters; let i = index"
+          class="letter"
+          [style.animation-delay.ms]="i * 100"
+        >
+          {{ letter === " " ? "&nbsp;" : letter }}
+        </span>
+      </div>
+      <div class="subtitle-glow">
+        <p class="text-gray-300 text-sm mt-2 fade-in-up">
+          Inicia sesión para continuar
+        </p>
+      </div>
     </div>
 
-    <app-dynamic-form
-      [inputForm]="displayForm$"
-      [PrimaryButtonText]="'Iniciar Sesion'"
-      (formSubmit)="listenSubmit($event)"
-      class="w-full"
-    ></app-dynamic-form>
-
-    <div class="flex items-center justify-center">
-      <button
-        type="button"
-        mat-stroked-button
-        class="w-full p-2 mx-6"
-        (click)="preregister()"
+    <!-- Formulario con animación de entrada -->
+    <div class="form-container">
+      <app-dynamic-form
+        [inputForm]="displayForm$"
+        [stateForm]="stateForm$"
+        [PrimaryButtonText]="'Iniciar Sesión'"
+        (formSubmit)="listenSubmit($event)"
+        class="w-full"
       >
-        Preregistro
-      </button>
+        <div abuttons class="flex flex-col gap-4 mt-6">
+          <button
+            type="button"
+            mat-stroked-button
+            class="w-full p-3 button-hover-effect text-cyan-400 border-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300"
+            (click)="preregister()"
+          >
+            <span class="button-text">Preregistro</span>
+          </button>
+          <button
+            type="button"
+            mat-raised-button
+            class="w-full p-3 button-hover-effect bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-cyan-500/25"
+            (click)="confirm()"
+          >
+            <span class="button-text">Confirmar AADHAAR</span>
+          </button>
+        </div>
+      </app-dynamic-form>
     </div>
   </div>
 </div>

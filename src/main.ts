@@ -15,14 +15,14 @@ import { environment } from "./environments/environment.dev";
 
 console.log("Environment:", environment);
 
-if (environment.production) {
+/* if (environment.production) {
   window.console.log = () => {};
   window.console.warn = () => {};
   window.console.error = () => {};
   window.console.info = () => {};
   window.console.debug = () => {};
   window.console.table = () => {};
-}
+} */
 
 bootstrapApplication(AppComponent, {
   ...appConfig,

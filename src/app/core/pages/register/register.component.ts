@@ -79,7 +79,6 @@ export class RegisterComponent implements OnInit {
   idFromUrl = signal<string>("");
   tipoPersonaNombre: string | undefined;
   idPersona: string | undefined;
-  state = signal<string>("");
 
   configureForm = () => {
     this.displayForm$.next(this.form);
@@ -118,9 +117,8 @@ export class RegisterComponent implements OnInit {
 
         if (data["status_create"]) {
           this.status_create = data["status_create"];
-          console.log("status_create:", this.status_create);
           this.status_create == "Confirmado"
-            ? this.stateForm$.next({ invalid: true, disabled: true })
+            ? this.stateForm$.next({ invalid: false, disabled: true })
             : undefined;
         }
 
@@ -192,21 +190,22 @@ export class RegisterComponent implements OnInit {
   };
 
   goConfirmData = () => {
-    this._router.navigate(["personas/new-persona", this.AADHAAR()]);
+    this._router.navigate(["personas/new-persona-by-user", this.AADHAAR()]);
   };
   goHome = () => {
     this._router.navigate([""]);
   };
   checkEstado = () => {
-    return this.state() === "Confirmado" ? false : true;
+    return this.status_create === "Confirmado" ? false : true;
   };
   listenSubmit = ($event: string) => {
     // ! El valor se cambia aca por que hay que intervenir antes de mandar al backend
     const persona: PersonaRequest = JSON.parse($event);
-    const estado = persona.tipoPersonaId == 2 ? "Pendiente" : "Confirmado";
-    this.state.set(estado);
-    console.log("estado:", estado);
-    const newPersona: PersonaRequest = { ...persona, estado: estado };
+    console.log("estado:", this.status_create);
+    const newPersona: PersonaRequest = {
+      ...persona,
+      estado: this.status_create,
+    };
 
     console.log("persona:", persona);
     if (this.idFromUrl()) {
